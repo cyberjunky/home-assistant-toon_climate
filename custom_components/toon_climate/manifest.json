@@ -3,7 +3,5 @@
   "name": "TOON Climate",
   "documentation": "https://github.com/cyberjunky/home-assistant-toon_climate",
   "dependencies": [],
-  "codeowners": [
-    "@cyberjunky"
-  ]
+  "codeowners": ["@cyberjunky"]
 }
