@@ -54,6 +54,11 @@ Using this card:
        - preset
 ```
 
+You can also control it with Google's assistant
+
+![alt text](https://github.com/cyberjunky/home-assistant-toon_climate/blob/master/screenshots/setpoint.png?raw=true "TOON Assistant Setpoint")
+![alt text](https://github.com/cyberjunky/home-assistant-toon_climate/blob/master/screenshots/eco-preset.png?raw=true "TOON Assistant ECO Preset")
+
 ### Changes
 * first release for hacs
 
