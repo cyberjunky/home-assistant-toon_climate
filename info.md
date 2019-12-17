@@ -1,7 +1,7 @@
 [![hacs_badge](https://img.shields.io/badge/HACS-Custom-orange.svg)](https://github.com/custom-components/hacs)  [![made-with-python](https://img.shields.io/badge/Made%20with-Python-1f425f.svg)](https://www.python.org/) [![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.me/cyberjunkynl/)
 
 # TOON Climate Component
-This component creates a climate device for rooted TOON thermostats.
+This component provides a climate device for rooted TOON thermostats.
 
 You can read and control thermostat mode and presets, read current temperature and control the setpoint.
 
@@ -29,7 +29,7 @@ To use this component in your installation, add the following to your `configura
 
 climate:
   - platform: toon_climate
-    name: Toon Thermostat
+    name: TOON Thermostat
     host: IP_ADDRESS
     port: 10080
     scan_interval: 10
@@ -37,9 +37,9 @@ climate:
 
 Configuration variables:
 
-- **name** (*Optional*): Name of the device. (default = 'Toon Thermostat')
-- **host** (*Required*): The hostname or IP address on which the Toon can be reached.
-- **port** (*Optional*): Port used by your Toon. (default = 10080)
+- **name** (*Optional*): Name of the device. (default = 'TOON Thermostat')
+- **host** (*Required*): The IP address on which the TOON can be reached.
+- **port** (*Optional*): Port used by your TOON. (default = 10080)
 - **scan_interval** (*Optional*): Number of seconds between polls. (default = 60)
 
 ### Screenshot
