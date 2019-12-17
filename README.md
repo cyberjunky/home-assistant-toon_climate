@@ -25,7 +25,7 @@ To use this component in your installation, add the following to your `configura
 
 climate:
   - platform: toon_climate
-    name: Toon Thermostat
+    name: TOON Thermostat
     host: IP_ADDRESS
     port: 10080
     scan_interval: 10
