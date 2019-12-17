@@ -1,7 +1,7 @@
 [![hacs_badge](https://img.shields.io/badge/HACS-Custom-orange.svg)](https://github.com/custom-components/hacs)  [![made-with-python](https://img.shields.io/badge/Made%20with-Python-1f425f.svg)](https://www.python.org/) [![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.me/cyberjunkynl/)
 
 # TOON Climate Component
-This component creates a climate device for rooted TOON thermostats.
+This component provides a climate device for rooted TOON thermostats.
 
 You can read and control thermostat mode and presets, read current temperature and control the setpoint.
 
