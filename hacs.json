@@ -2,5 +2,5 @@
   "name": "TOON Climate",
   "country": "NL",
   "render_readme": false,
-  "domains": ["climate"],
+  "domains": ["climate"]
 }
