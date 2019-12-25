@@ -12,7 +12,7 @@ More information about rooting your TOON can be found here:
 
 {% if not installed %}
 
-### Installation
+## Installation
 
 - Install this integration using HACS.
 - Configure using configuration instructions below.
@@ -20,7 +20,7 @@ More information about rooting your TOON can be found here:
 
 {% endif %}
 
-### Usage
+## Usage
 To use this component in your installation, add the following to your `configuration.yaml` file:
 
 ```yaml
@@ -41,7 +41,7 @@ Configuration variables:
 - **port** (*Optional*): Port used by your TOON. (default = 10080)
 - **scan_interval** (*Optional*): Number of seconds between polls. (default = 60)
 
-### Screenshot
+## Screenshot
 
 ![alt text](https://github.com/cyberjunky/home-assistant-toon_climate/blob/master/screenshots/toon.png?raw=true "Screenshot TOON")
 
@@ -62,5 +62,5 @@ You can also control it with Google's assistant
 ![alt text](https://github.com/cyberjunky/home-assistant-toon_climate/blob/master/screenshots/toon-setpoint.png?raw=true "TOON Assistant Setpoint")
 ![alt text](https://github.com/cyberjunky/home-assistant-toon_climate/blob/master/screenshots/toon-eco-preset.png?raw=true "TOON Assistant ECO Preset")
 
-### Donation
+## Donation
 [![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.me/cyberjunkynl/)
