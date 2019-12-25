@@ -1,7 +1,6 @@
-[![hacs_badge](https://img.shields.io/badge/HACS-Custom-orange.svg)](https://github.com/custom-components/hacs)  [![made-with-python](https://img.shields.io/badge/Made%20with-Python-1f425f.svg)](https://www.python.org/) [![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.me/cyberjunkynl/)
+[![hacs_badge](https://img.shields.io/badge/HACS-Default-orange.svg)](https://github.com/custom-components/hacs)  [![made-with-python](https://img.shields.io/badge/Made%20with-Python-1f425f.svg)](https://www.python.org/) [![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.me/cyberjunkynl/)
 
-# TOON Climate Component
-This component provides a climate device for rooted TOON thermostats.
+This is a Custom Component for Home-Assistant (https://home-assistant.io) that provides a climate device for rooted TOON thermostats.
 
 You can read and control thermostat mode and presets, read current temperature and control the setpoint.
 
@@ -15,8 +14,8 @@ More information about rooting your TOON can be found here:
 
 ### Installation
 
-- Copy directory `custom_components/toon_climate` to your `<config dir>/custom_components` directory.
-- Configure with config below.
+- Install this integration using HACS.
+- Configure using configuration instructions below.
 - Restart Home-Assistant.
 
 {% endif %}
@@ -62,9 +61,6 @@ You can also control it with Google's assistant
 
 ![alt text](https://github.com/cyberjunky/home-assistant-toon_climate/blob/master/screenshots/toon-setpoint.png?raw=true "TOON Assistant Setpoint")
 ![alt text](https://github.com/cyberjunky/home-assistant-toon_climate/blob/master/screenshots/toon-eco-preset.png?raw=true "TOON Assistant ECO Preset")
-
-### Changes
-* first release for hacs
 
 ### Donation
 [![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.me/cyberjunkynl/)
