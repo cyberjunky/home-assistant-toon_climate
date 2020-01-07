@@ -10,16 +10,6 @@ TOON thermostats are available in The Netherlands and Belgium.
 More information about rooting your TOON can be found here:
 [Eneco TOON as Domotica controller](http://www.domoticaforum.eu/viewforum.php?f=87)
 
-{% if not installed %}
-
-## Installation
-
-- Install this integration using HACS.
-- Configure using configuration instructions below.
-- Restart Home-Assistant.
-
-{% endif %}
-
 ## Usage
 To use this component in your installation, add the following to your `configuration.yaml` file:
 
