@@ -35,7 +35,7 @@ climate:
   - platform: toon_climate
     name: TOON Thermostat
     host: IP_ADDRESS
-    port: 10080
+    port: 80
     scan_interval: 10
 ```
 
@@ -43,7 +43,7 @@ Configuration variables:
 
 - **name** (*Optional*): Name of the device. (default = 'TOON Thermostat')
 - **host** (*Required*): The IP address on which the TOON can be reached.
-- **port** (*Optional*): Port used by your TOON. (default = 10080)
+- **port** (*Optional*): Port used by your TOON. (default = 80)
 - **scan_interval** (*Optional*): Number of seconds between polls. (default = 60)
 
 ## Screenshot
