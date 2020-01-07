@@ -43,7 +43,7 @@ Configuration variables:
 
 - **name** (*Optional*): Name of the device. (default = 'TOON Thermostat')
 - **host** (*Required*): The IP address on which the TOON can be reached.
-- **port** (*Optional*): Port used by your TOON. (default = 80)
+- **port** (*Optional*): Port used by your TOON. (default = 80, other used port numbers can be 10080 or 7080)
 - **scan_interval** (*Optional*): Number of seconds between polls. (default = 60)
 
 ## Screenshot
