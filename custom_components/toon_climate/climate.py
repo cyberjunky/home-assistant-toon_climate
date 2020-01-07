@@ -8,7 +8,7 @@ climate:
   - platform: toon_climate
     name: TOON Thermostat
     host: <IP_ADDRESS>
-    port: 10080
+    port: 80
     scan_interval: 10
 """
 import logging
@@ -58,7 +58,7 @@ BASE_URL = 'http://{0}:{1}{2}'
 PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend({
     vol.Optional(CONF_NAME, default=DEFAULT_NAME): cv.string,
     vol.Required(CONF_HOST): cv.string,
-    vol.Optional(CONF_PORT, default=10800): cv.positive_int,
+    vol.Optional(CONF_PORT, default=80): cv.positive_int,
 })
 
 # pylint: disable=unused-argument
