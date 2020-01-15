@@ -33,7 +33,7 @@ To use this component in your installation, add the following to your `configura
 
 climate:
   - platform: toon_climate
-    name: TOON Thermostat
+    name: Toon Thermostat
     host: IP_ADDRESS
     port: 80
     scan_interval: 10
@@ -57,7 +57,7 @@ TOON with simple-thermostat in Lovelace
 Using this card:
 ```
    - type: 'custom:simple-thermostat'
-     entity: climate.toon
+     entity: climate.toon_thermostat
      control:
        - preset
 ```
