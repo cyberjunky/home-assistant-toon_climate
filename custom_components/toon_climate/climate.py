@@ -17,7 +17,11 @@ import requests
 import voluptuous as vol
 from typing import Any, Dict, List, Optional
 
-from homeassistant.components.climate import (ClimateDevice, PLATFORM_SCHEMA)
+try:
+    from homeassistant.components.climate import (ClimateEntity, PLATFORM_SCHEMA)
+except ImportError:
+    from homeassistant.components.climate import (ClimateDevice as ClimateEntity, PLATFORM_SCHEMA)
+
 from homeassistant.components.climate.const import (
     HVAC_MODE_HEAT,
     HVAC_MODE_OFF,
@@ -69,7 +73,7 @@ def setup_platform(hass, config, add_devices, discovery_info=None):
 
 # pylint: disable=abstract-method
 # pylint: disable=too-many-instance-attributes
-class ThermostatDevice(ClimateDevice):
+class ThermostatDevice(ClimateEntity):
     """Representation of a TOON climate device."""
 
     def __init__(self, name, host, port) -> None:
