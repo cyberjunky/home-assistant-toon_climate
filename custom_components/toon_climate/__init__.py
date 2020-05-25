@@ -1,1 +1,1 @@
-"""TOON Climate Component"""
+"""Toon Climate Component"""
