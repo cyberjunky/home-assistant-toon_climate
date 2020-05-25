@@ -1,12 +1,12 @@
 """
-Support for TOON thermostat.
+Support for Toon thermostat.
 Only the rooted version.
 
 configuration.yaml
 
 climate:
   - platform: toon_climate
-    name: TOON Thermostat
+    name: Toon Thermostat
     host: <IP_ADDRESS>
     port: 80
     scan_interval: 10
@@ -74,10 +74,10 @@ def setup_platform(hass, config, add_devices, discovery_info=None):
 # pylint: disable=abstract-method
 # pylint: disable=too-many-instance-attributes
 class ThermostatDevice(ClimateEntity):
-    """Representation of a TOON climate device."""
+    """Representation of a Toon climate device."""
 
     def __init__(self, name, host, port) -> None:
-        """Initialize the TOON climate device."""
+        """Initialize the Toon climate device."""
         self._data = None
         self._name = name
         self._host = host
@@ -199,7 +199,7 @@ class ThermostatDevice(ClimateEntity):
             self._port,
             '/happ_thermstat?action=changeSchemeState'
             '&state=2&temperatureState='+str(state)))
-        _LOGGER.debug("Set TOON preset mode to %s (value %s)", str(preset_mode),
+        _LOGGER.debug("Set Toon preset mode to %s (value %s)", str(preset_mode),
                       str(state))
         self._preset = preset_mode
         
@@ -215,7 +215,7 @@ class ThermostatDevice(ClimateEntity):
                 self._host,
                 self._port,
                 '/happ_thermstat?action=setSetpoint&Setpoint='+str(value)))
-            _LOGGER.debug("Set TOON target temp to %s°C (value %s)", str(target_temperature), str(value))
+            _LOGGER.debug("Set Toon target temp to %s°C (value %s)", str(target_temperature), str(value))
         self._target_temperature = target_temperature
 
     @property
@@ -252,9 +252,9 @@ class ThermostatDevice(ClimateEntity):
 
     def set_hvac_mode(self, hvac_mode: str) -> None:
         """Set new target hvac mode."""
-        _LOGGER.debug("Set TOON hvac mode to %s", str(hvac_mode))
+        _LOGGER.debug("Set Toon hvac mode to %s", str(hvac_mode))
 
-        """Turn off/on TOON heating program."""
+        """Turn off/on Toon heating program."""
         if hvac_mode == 'off':
             self._data = self.do_api_request(BASE_URL.format(
                 self._host,
