@@ -30,6 +30,8 @@ Configuration variables:
 - **host** (*Required*): The IP address on which the Toon can be reached.
 - **port** (*Optional*): Port used by your Toon. (default = 80, other used port numbers can be 10080 or 7080))
 - **scan_interval** (*Optional*): Number of seconds between polls. (default = 60)
+- **min_temp** (*Optional*): Minimal temperature you can set (default = 6.0)
+- **max_temp** (*Optional*): Maximal temperature you can set (default = 25.0)
 
 ## Screenshot
 
