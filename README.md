@@ -67,6 +67,8 @@ Using this card:
 You can create a sensor with more heating information like so (replace 'climate.toon' with your device name if different):
 
 ```yaml
+sensor:
+  - platform: template
     sensors:
       toon_driewegklep:
         friendly_name: 'Driewegklep'
