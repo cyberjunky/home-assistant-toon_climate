@@ -49,6 +49,22 @@ Using this card:
        - preset
 ```
 
+You can create a sensor with more heating information like so (replace 'climate.toon' with your device name if different):
+
+```yaml
+    sensors:
+      toon_driewegklep:
+        friendly_name: 'Driewegklep'
+        value_template: >-
+          {% if is_state_attr('climate.toon','burner_info', 0) %}
+             Neutraal
+          {% elif is_state_attr('climate.toon','burner_info', 1) %}
+             CV
+          {% elif is_state_attr('climate.toon','burner_info', 2) %}
+             Warm Water
+          {% endif %}
+```
+
 You can also control it with Google's assistant
 
 ![alt text](https://github.com/cyberjunky/home-assistant-toon_climate/blob/master/screenshots/toon-setpoint.png?raw=true "Toon Assistant Setpoint")
