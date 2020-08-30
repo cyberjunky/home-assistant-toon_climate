@@ -116,17 +116,17 @@ class ThermostatDevice(ClimateEntity):
                     url, headers={"Accept-Encoding": "identity"}
                 )
         except aiohttp.ClientError:
-            _LOGGER.error("Cannot poll Toon using url: %s", self._url)
+            _LOGGER.error("Cannot poll Toon using url: %s", url)
             return None
         except asyncio.TimeoutError:
             _LOGGER.error(
-                "Timeout error occurred while polling Toon using url: %s", self._url
+                "Timeout error occurred while polling Toon using url: %s", url
             )
             return None
 
         try:
             response = await response.json(content_type="text/javascript")
-            _LOGGER.debug("Data received from Toon: %s", self._data)
+            _LOGGER.debug("Data received from Toon: %s", response)
         except (TypeError, KeyError) as err:
             _LOGGER.error("Cannot parse data received from Toon: %s", err)
             return None
