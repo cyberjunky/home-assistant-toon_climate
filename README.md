@@ -56,6 +56,8 @@ Toon with simple-thermostat in Lovelace
 
 ![alt text](https://github.com/cyberjunky/home-assistant-toon_climate/blob/master/screenshots/toon-simple.png?raw=true "Toon simple-thermostat Screenshot")
 
+Install Javascript from: https://github.com/nervetattoo/simple-thermostat
+
 Using this card:
 ```
    - type: 'custom:simple-thermostat'
