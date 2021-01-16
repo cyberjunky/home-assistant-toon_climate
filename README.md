@@ -94,6 +94,35 @@ sensor:
         value_template: "{{ state_attr('climate.toon','current_temperature') }}"
         unit_of_measurement: °C
 ```
+
+If you have a Toon2 and want to gather the environment sensor data you can create REST sensors like this:
+```yaml
+sensor:
+  - platform: rest
+    name: Toon2 AirSensors
+    json_attributes:
+      - humidity
+      - tvoc
+      - eco2
+    value_template: '{{ value_json["temperature"] }}'
+    unit_of_measurement: "°C"
+    resource: http://192.168.2.106/tsc/sensors
+
+  - platform: template
+    sensors:
+      toon2_humidity:
+        friendly_name: "Humidity"
+        value_template: '{{ states.sensor.toon2_airsensors.attributes["humidity"] }}'
+        unit_of_measurement: "%"
+      toon2_tvoc:
+        friendly_name: "TVOC"
+        value_template: '{{ states.sensor.toon2_airsensors.attributes["tvoc"] }}'
+        unit_of_measurement: "ppm"
+      toon2_eco2:
+        friendly_name: "ECO2"
+        value_template: '{{ states.sensor.toon2_airsensors.attributes["eco2"] }}'
+        unit_of_measurement: "?"
+```
           
 You can also control it with Google's assistant
 
