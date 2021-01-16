@@ -84,6 +84,17 @@ sensor:
           {% endif %}
 ```
 
+If you want the room temperature in a badge do this:
+```yaml
+sensor:
+  - platform: template
+    sensors:
+      temperatuur_woonkamer:
+        friendly_name: "Temperatuur Woonkamer"
+        value_template: "{{ state_attr('climate.toon','current_temperature') }}"
+        unit_of_measurement: °C
+```
+          
 You can also control it with Google's assistant
 
 ![alt text](https://github.com/cyberjunky/home-assistant-toon_climate/blob/master/screenshots/toon-setpoint.png?raw=true "Toon Assistant Setpoint")
