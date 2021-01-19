@@ -5,6 +5,33 @@ This is a Custom Component for Home-Assistant (https://home-assistant.io) that p
 
 You can read and control thermostat mode and presets, read current temperature and control the setpoint.
 
+Based on the standard behavior of the Toon the following two work modes are supported:
+- Heat:     Heat to a target temperature (schedule off)
+- Auto:     Follow the configured schedule as configured in your Toon (schedule on)
+
+The following five presets are supported
+- Away:     This will change the setpoint to what you have configured in your Toon for the away state
+- Home:     This will change the setpoint to what you have configured in your Toon for the home state
+- Comfort:  This will change the setpoint to what you have configured in your Toon for the comfort state
+- Sleep:    This will change the setpoint to what you have configured in your Toon for the sleep state
+
+(*) The above four presets can be used independent of the selected work mode.
+    -   When the Toon is set to "heat" mode the preset will change the setpoint to the setpoint
+        configured for the respective preset. It will keep that setpoint until you change it manually 
+        or switch to "auto" mode
+    -   When the Toon is set to "auto" mode the preset will change the setpoint to the setpoint configured
+        for the respective preset. However it will only change the setpoint temporatily until the schedule 
+        changes to the next programmed preset. 
+
+- Eco:      This will be used for the vacation mode the Toon offers. Regardless of the active work mode
+            the preset will change the setpoint to the setpoint configured for the "vacation" setting. It
+            will stay in this mode untill you change to one of the other four presets or chnage the work 
+            mode. So as long as the Toon is in eco (vacation) mode it will ensure the temperature does not
+            drop below the set setpoint.
+            
+(*) Please note that to use the "eco" (vacation) setpoint you will need to activate the vacation mode at 
+    least once on your Toon. If not the setpoint will use the lowest temperature (6 degrees celcius)
+
 NOTE: This component only works with rooted Toon devices.
 Toon thermostats are available in The Netherlands and Belgium.
 
@@ -37,6 +64,8 @@ climate:
     host: IP_ADDRESS
     port: 80
     scan_interval: 10
+    min_temp: 6.0
+    max_temp: 30.0
 ```
 
 Configuration variables:
@@ -46,7 +75,7 @@ Configuration variables:
 - **port** (*Optional*): Port used by your Toon. (default = 80, other used port numbers can be 10080 or 7080)
 - **scan_interval** (*Optional*): Number of seconds between polls. (default = 60)
 - **min_temp** (*Optional*): Minimal temperature you can set (default = 6.0)
-- **max_temp** (*Optional*): Maximal temperature you can set (default = 25.0)
+- **max_temp** (*Optional*): Maximal temperature you can set (default = 30.0)
 
 ## Screenshot
 
