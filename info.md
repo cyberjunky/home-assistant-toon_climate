@@ -40,16 +40,8 @@ More information about rooting your Toon can be found here:
 
 ## Installation
 
-### HACS - Recommended
-- Have [HACS](https://hacs.xyz) installed, this will allow you to easily manage and track updates.
-- Search for 'Toon Climate'.
-- Click Install below the found integration.
-- Configure using the configuration instructions below.
-- Restart Home-Assistant.
-
-### Manual
-- Copy directory `custom_components/toon_climate` to your `<config dir>/custom_components` directory.
-- Configure with config below.
+- Install this integration using HACS.
+- Configure using configuration instructions below.
 - Restart Home-Assistant.
 
 ## Usage
