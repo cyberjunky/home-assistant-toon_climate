@@ -31,6 +31,7 @@ from homeassistant.components.climate.const import (
     CURRENT_HVAC_IDLE,
     HVAC_MODE_AUTO,
     HVAC_MODE_HEAT,
+    HVAC_MODE_OFF,
     PRESET_AWAY,
     PRESET_COMFORT,
     PRESET_ECO,
@@ -135,6 +136,7 @@ class ThermostatDevice(ClimateEntity):
         self._current_temperature = None
         self._ot_comm_error = None
         self._program_state = None
+        self._hvac_mode = None
 
     @staticmethod
     async def do_api_request(session, url):
@@ -191,7 +193,16 @@ class ThermostatDevice(ClimateEntity):
             self._current_temperature = int(self._data["currentTemp"]) / 100
             self._ot_comm_error = int(self._data["otCommError"])
             self._program_state = int(self._data["programState"])
-
+            
+            if (self._active_state == 4):
+                self._hvac_mode = HVAC_MODE_OFF
+            elif (self._program_state == 0):
+                self._hvac_mode = HVAC_MODE_HEAT
+            elif (self._program_state == 1) or (self._program_state == 2):
+                self._hvac_mode = HVAC_MODE_AUTO
+            else:
+                self._hvac_mode = None
+                
     @property
     def supported_features(self) -> int:
         """
@@ -380,21 +391,9 @@ class ThermostatDevice(ClimateEntity):
     def hvac_mode(self) -> str:
         """
         Return the current operation mode
-
-        Toon programState values
-        - 0: Programm mode is off (not automatically changing presets)
-        - 1: Programm mode is on (automatically changing presets)
-        - 2: Programm mode is on but setpoint/preset is changed until
-             the next preset is automatically activated
-        - 8: No official programm mode as according to the Toon API doc
-             this would be state 4. This only seems to works when we
-             we use an 8. It will return the programm state to it's
-             original state when another preset is selected.
         """
-        if (self._program_state == 1) or (self._program_state == 2):
-            return HVAC_MODE_AUTO
-
-        return HVAC_MODE_HEAT
+        return self._hvac_mode
+    
 
     async def async_set_hvac_mode(self, hvac_mode: str) -> None:
         """
@@ -403,23 +402,53 @@ class ThermostatDevice(ClimateEntity):
         Support modes:
         - HVAC_MODE_HEAT: Heat to a target temperature (schedule off)
         - HVAC_MODE_AUTO: Follow the configured schedule
+        - HVAC_MODE_OFF: Vacation mode (heat to a target architecture)
         """
         _LOGGER.debug("Set Toon hvac mode to %s", str(hvac_mode))
 
-        if hvac_mode == HVAC_MODE_HEAT:
+        if (hvac_mode == HVAC_MODE_HEAT) and (self._active_state == 4):
+            """ Set preset to home when returning from vacation """
             self._data = await self.do_api_request(
                 self._session,
                 BASE_URL.format(
                     self._host, self._port,
-                    "/happ_thermstat?action=changeSchemeState&state=0",
+                    "/happ_thermstat?action=changeSchemeState"
+                    "&state=0"
+                    "&temperatureState=1",                
                 ),
             )
-        elif hvac_mode == HVAC_MODE_AUTO:
+        elif (hvac_mode == HVAC_MODE_HEAT):
+            """ No preset needs to be defined """
             self._data = await self.do_api_request(
                 self._session,
                 BASE_URL.format(
                     self._host, self._port,
-                    "/happ_thermstat?action=changeSchemeState&state=1",
+                    "/happ_thermstat?action=changeSchemeState"
+                    "&state=0",
+                ),
+             )   
+        elif (hvac_mode == HVAC_MODE_AUTO):
+            """ No preset needs to be defined """
+            self._data = await self.do_api_request(
+                self._session,
+                BASE_URL.format(
+                    self._host, self._port,
+                    "/happ_thermstat?action=changeSchemeState"
+                    "&state=1",
+                ),
+            )
+        elif (hvac_mode == HVAC_MODE_OFF):
+            """
+            For vacation mode the state needs to be set to 8 
+            and the temperature preset needs to be set to 4 
+            """
+            self._data = await self.do_api_request(
+                self._session,
+                BASE_URL.format(
+                    self._host, self._port,
+                    "/happ_thermstat?action=changeSchemeState"
+                    "&state=8"
+                    "&temperatureState=4",                
                 ),
             )
 
