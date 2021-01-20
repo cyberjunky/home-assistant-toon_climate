@@ -158,5 +158,16 @@ You can also control it with Google's assistant
 ![alt text](https://github.com/cyberjunky/home-assistant-toon_climate/blob/master/screenshots/toon-setpoint.png?raw=true "Toon Assistant Setpoint")
 ![alt text](https://github.com/cyberjunky/home-assistant-toon_climate/blob/master/screenshots/toon-eco-preset.png?raw=true "Toon Assistant ECO Preset")
 
+## Debugging
+
+Add the relevant lines below to the `configuration.yaml`:
+
+```yaml
+logger:
+  default: info
+  logs:
+    homeassistant.components.toon_climate: debug
+```
+
 ## Donation
 [![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.me/cyberjunkynl/)
