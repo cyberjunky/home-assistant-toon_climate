@@ -87,33 +87,120 @@ Toon with simple-thermostat in Lovelace
 
 Install Javascript from: https://github.com/nervetattoo/simple-thermostat
 
-Using this card:
+
+Using this card (replace 'climate.toon' with your device name if different):
 ```
    - type: 'custom:simple-thermostat'
-     entity: climate.toon_thermostat
+     entity: climate.toon
      control:
        - preset
 ```
 
-You can create a sensor with more heating information like so (replace 'climate.toon' with your device name if different):
+For the following examples please replace 'climate.toon' with your own climate device name if different.
+
+If you want to automate changing the working mode of your Toon you can use the folowing scripts:
 
 ```yaml
-sensor:
-  - platform: template
-    sensors:
-      toon_driewegklep:
-        friendly_name: 'Driewegklep'
-        value_template: >-
-          {% if is_state_attr('climate.toon','burner_info', 0) %}
-             Neutraal
-          {% elif is_state_attr('climate.toon','burner_info', 1) %}
-             CV
-          {% elif is_state_attr('climate.toon','burner_info', 2) %}
-             Warm Water
-          {% endif %}
+script:
+  - toon_enable_manual_mode:
+      alias: Toon enable Manual mode
+      sequence:
+      - service: climate.set_hvac_mode
+        data:
+          hvac_mode: 'heat'
+        entity_id: climate.toon
+      mode: single
+  - toon_enable_schedule_mode:
+      alias: Toon enable Schedule mode
+      sequence:
+      - service: climate.set_hvac_mode
+        data:
+          hvac_mode: 'auto'
+        entity_id: climate.toon
+      mode: single
 ```
 
-If you want the room temperature in a badge do this:
+
+If you want to automate changing the standard presets of your Toon you can use the folowing scripts:
+
+```yaml
+script:
+  - toon_activate_preset_comfort:
+      alias: Toon activate preset Comfort
+      sequence:
+      - service: climate.set_preset_mode
+        data:
+          preset_mode: 'comfort'
+        entity_id: climate.toon
+      mode: single
+  - toon_activate_preset_away:
+      alias: Toon activate preset Away
+      sequence:
+      - service: climate.set_preset_mode
+        data:
+          preset_mode: 'away'
+        entity_id: climate.toon
+      mode: single
+  - toon_activate_preset_home:
+      alias: Toon activate preset Home
+      sequence:
+      - service: climate.set_preset_mode
+        data:
+          preset_mode: 'home'
+        entity_id: climate.toon
+      mode: single
+  - toon_activate_preset_sleep:
+      alias: Toon activate preset Sleep
+      sequence:
+      - service: climate.set_preset_mode
+        data:
+          preset_mode: 'sleep'
+        entity_id: climate.toon
+      mode: single
+```
+
+
+And in case you want to use the additional "vacation" feature you can use the following script:
+
+```yaml
+script:    
+  - toon_activate_preset_eco:
+      alias: Toon activate preset Eco
+      sequence:
+      - service: climate.set_preset_mode
+        data:
+          preset_mode: eco
+        entity_id: climate.toon
+      mode: single
+```
+
+As a result the Toon Climate Component will put the Toon in "vacation" mode. In this mode none of the standard presets in 
+the Toon are activated. Instead it will use the setpoint that was set the last time the vacation mode on the Toon device 
+itself was actiated. It will ensure the room will not drop below that specific setpoint. This vacation mode will be cancelled 
+as soon as any of the presets on the Toon device are selected or by means of the Toon Climate Component being triggered 
+through either the climate card in Home Assistant or any related home assistant scripts or automation requests.
+
+
+If you want a sensor that provides you with the current working mode of the Toon (manual, auto or vacation) add the following:
+```yaml
+sensor:
+- platform: template
+  sensors:
+    toon_operation_mode:
+      friendly_name: 'Programma'
+        value_template: >-
+        {% if is_state('climate.toon','off') %}
+          Vakantie
+        {% elif is_state('climate.toon','heat') %}
+          Handmatig
+        {% elif is_state('climate.toon','auto') %}
+          Automatisch
+        {% endif %}
+```
+
+
+If you want a sensor that allows you to show the current room temperature (e.g. in a badge) add the following:
+
 ```yaml
 sensor:
   - platform: template
@@ -124,7 +211,9 @@ sensor:
         unit_of_measurement: °C
 ```
 
+
 If you have a Toon2 and want to gather the environment sensor data you can create REST sensors like this:
+
 ```yaml
 sensor:
   - platform: rest
@@ -152,11 +241,32 @@ sensor:
         value_template: '{{ states.sensor.toon2_airsensors.attributes["eco2"] }}'
         unit_of_measurement: "?"
 ```
+
+
+You can create a sensor with more heating information like so:
+
+```yaml
+sensor:
+  - platform: template
+    sensors:
+      toon_driewegklep:
+        friendly_name: 'Driewegklep'
+        value_template: >-
+          {% if is_state_attr('climate.toon','burner_info', 0) %}
+             Neutraal
+          {% elif is_state_attr('climate.toon','burner_info', 1) %}
+             CV
+          {% elif is_state_attr('climate.toon','burner_info', 2) %}
+             Warm Water
+          {% endif %}
+```
+
           
-You can also control it with Google's assistant
+You can also control the Toon device with Google's assistant.
 
 ![alt text](https://github.com/cyberjunky/home-assistant-toon_climate/blob/master/screenshots/toon-setpoint.png?raw=true "Toon Assistant Setpoint")
 ![alt text](https://github.com/cyberjunky/home-assistant-toon_climate/blob/master/screenshots/toon-eco-preset.png?raw=true "Toon Assistant ECO Preset")
+
 
 ## Donation
 [![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.me/cyberjunkynl/)
