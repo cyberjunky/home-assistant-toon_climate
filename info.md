@@ -40,16 +40,8 @@ More information about rooting your Toon can be found here:
 
 ## Installation
 
-### HACS - Recommended
-- Have [HACS](https://hacs.xyz) installed, this will allow you to easily manage and track updates.
-- Search for 'Toon Climate'.
-- Click Install below the found integration.
-- Configure using the configuration instructions below.
-- Restart Home-Assistant.
-
-### Manual
-- Copy directory `custom_components/toon_climate` to your `<config dir>/custom_components` directory.
-- Configure with config below.
+- Install this integration using HACS.
+- Configure using configuration instructions below.
 - Restart Home-Assistant.
 
 ## Usage
@@ -267,12 +259,6 @@ You can also control the Toon device with Google's assistant.
 ![alt text](https://github.com/cyberjunky/home-assistant-toon_climate/blob/master/screenshots/toon-setpoint.png?raw=true "Toon Assistant Setpoint")
 ![alt text](https://github.com/cyberjunky/home-assistant-toon_climate/blob/master/screenshots/toon-eco-preset.png?raw=true "Toon Assistant ECO Preset")
 
-
-## Donation
-[![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.me/cyberjunkynl/)
-
-
-=======
 ## Debugging
 
 Add the relevant lines below to the `configuration.yaml`:
@@ -281,5 +267,8 @@ Add the relevant lines below to the `configuration.yaml`:
 logger:
   default: info
   logs:
-    custom_components.toon_climate: debug
+    homeassistant.components.toon_climate: debug
 ```
+
+## Donation
+[![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.me/cyberjunkynl/)

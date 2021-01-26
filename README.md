@@ -268,11 +268,6 @@ You can also control the Toon device with Google's assistant.
 ![alt text](https://github.com/cyberjunky/home-assistant-toon_climate/blob/master/screenshots/toon-eco-preset.png?raw=true "Toon Assistant ECO Preset")
 
 
-## Donation
-[![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.me/cyberjunkynl/)
-
-
-=======
 ## Debugging
 
 Add the relevant lines below to the `configuration.yaml`:
@@ -281,5 +276,8 @@ Add the relevant lines below to the `configuration.yaml`:
 logger:
   default: info
   logs:
-    custom_components.toon_climate: debug
+    homeassistant.components.toon_climate: debug
 ```
+
+## Donation
+[![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.me/cyberjunkynl/)
