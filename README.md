@@ -270,3 +270,16 @@ You can also control the Toon device with Google's assistant.
 
 ## Donation
 [![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.me/cyberjunkynl/)
+
+
+=======
+## Debugging
+
+Add the relevant lines below to the `configuration.yaml`:
+
+```yaml
+logger:
+  default: info
+  logs:
+    custom_components.toon_climate: debug
+```
