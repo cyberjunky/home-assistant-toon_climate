@@ -12,6 +12,11 @@ climate:
         scan_interval: 10
         min_temp: 6.0
         max_temp: 30.0
+        
+logger:
+  default: info
+  logs:
+    custom_components.toon_climate: debug
 
 More details:
 - https://developers.home-assistant.io/docs/core/entity/climate/
@@ -260,7 +265,8 @@ class ThermostatDevice(ClimateEntity):
         if target_temperature is None:
             return
 
-        value = target_temperature * 100
+        value = int(target_temperature * 100)
+        
         self._data = await self.do_api_request(
             self._session,
             BASE_URL.format(
@@ -269,11 +275,15 @@ class ThermostatDevice(ClimateEntity):
                 "&Setpoint=" + str(value),
             ),
         )
-        _LOGGER.debug(
-            "Set Toon target temp to %s°C (value %s)",
-            str(target_temperature),
-            str(value),
+
+        _LOGGER.info(
+            "Toon: set target temperature to %s°C", str(target_temperature),
         )
+
+        _LOGGER.debug(
+            "Toon: request 'setSetpoint' with 'Setpoint' value %s", str(value),
+        )
+
         self._current_setpoint = target_temperature
 
     @property
@@ -374,9 +384,14 @@ class ThermostatDevice(ClimateEntity):
             ),
         )
 
-        _LOGGER.debug(
-            "Set Toon preset mode to %s (value %s)",
+        _LOGGER.info(
+            "Toon: set preset mode to %s",
             str(preset_mode.lower()),
+        )    
+
+        _LOGGER.debug(
+            "Toon: request 'changeSchemeState' with 'state' value %s and 'temperatureState' value %s",
+            str(scheme_state),
             str(scheme_temp),
         )
 
@@ -404,7 +419,7 @@ class ThermostatDevice(ClimateEntity):
         - HVAC_MODE_AUTO: Follow the configured schedule
         - HVAC_MODE_OFF: Vacation mode (heat to a target architecture)
         """
-        _LOGGER.debug("Set Toon hvac mode to %s", str(hvac_mode))
+        _LOGGER.info("Toon: set hvac mode to %s", str(hvac_mode))
 
         if (hvac_mode == HVAC_MODE_HEAT) and (self._active_state == 4):
             """ Set preset to home when returning from vacation """
@@ -464,4 +479,3 @@ class ThermostatDevice(ClimateEntity):
             "burner_info": self._burner_info,
             "modulation_level": self._modulation_level,
         }
-
