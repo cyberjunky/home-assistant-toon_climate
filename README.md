@@ -279,7 +279,7 @@ Add the relevant lines below to the `configuration.yaml`:
 logger:
   default: info
   logs:
-    homeassistant.components.toon_climate: debug
+    custom_components.toon_climate: debug
 ```
 
 ## Donation
