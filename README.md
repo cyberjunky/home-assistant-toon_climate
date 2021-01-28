@@ -232,14 +232,17 @@ sensor:
         friendly_name: "Humidity"
         value_template: '{{ states.sensor.toon2_airsensors.attributes["humidity"] }}'
         unit_of_measurement: "%"
+        icon_template: "mdi:water-percent"
       toon2_tvoc:
         friendly_name: "TVOC"
         value_template: '{{ states.sensor.toon2_airsensors.attributes["tvoc"] }}'
-        unit_of_measurement: "ppm"
+        unit_of_measurement: "ppb"
+        icon_template: "mdi:air-filter"
       toon2_eco2:
-        friendly_name: "ECO2"
+        friendly_name: "eCO2"
         value_template: '{{ states.sensor.toon2_airsensors.attributes["eco2"] }}'
-        unit_of_measurement: "?"
+        unit_of_measurement: "ppm"
+        icon_template: "mdi:molecule-co2"
 ```
 
 
