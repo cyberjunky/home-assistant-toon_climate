@@ -40,8 +40,16 @@ More information about rooting your Toon can be found here:
 
 ## Installation
 
-- Install this integration using HACS.
-- Configure using configuration instructions below.
+### HACS - Recommended
+- Have [HACS](https://hacs.xyz) installed, this will allow you to easily manage and track updates.
+- Search for 'Toon Climate'.
+- Click Install below the found integration.
+- Configure using the configuration instructions below.
+- Restart Home-Assistant.
+
+### Manual
+- Copy directory `custom_components/toon_climate` to your `<config dir>/custom_components` directory.
+- Configure with config below.
 - Restart Home-Assistant.
 
 ## Usage
@@ -224,14 +232,17 @@ sensor:
         friendly_name: "Humidity"
         value_template: '{{ states.sensor.toon2_airsensors.attributes["humidity"] }}'
         unit_of_measurement: "%"
+        icon_template: "mdi:water-percent"
       toon2_tvoc:
         friendly_name: "TVOC"
         value_template: '{{ states.sensor.toon2_airsensors.attributes["tvoc"] }}'
-        unit_of_measurement: "ppm"
+        unit_of_measurement: "ppb"
+        icon_template: "mdi:air-filter"
       toon2_eco2:
-        friendly_name: "ECO2"
+        friendly_name: "eCO2"
         value_template: '{{ states.sensor.toon2_airsensors.attributes["eco2"] }}'
-        unit_of_measurement: "?"
+        unit_of_measurement: "ppm"
+        icon_template: "mdi:molecule-co2"
 ```
 
 
@@ -258,6 +269,7 @@ You can also control the Toon device with Google's assistant.
 
 ![alt text](https://github.com/cyberjunky/home-assistant-toon_climate/blob/master/screenshots/toon-setpoint.png?raw=true "Toon Assistant Setpoint")
 ![alt text](https://github.com/cyberjunky/home-assistant-toon_climate/blob/master/screenshots/toon-eco-preset.png?raw=true "Toon Assistant ECO Preset")
+
 
 ## Debugging
 

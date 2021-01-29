@@ -84,6 +84,7 @@ Supported hvac modes:
 
 - HVAC_MODE_HEAT: Heat to a target temperature (schedule off)
 - HVAC_MODE_AUTO: Follow the configured schedule
+- HVAC_MODE_OFF: This mode is used to activate the vacation mode
 """
 SUPPORT_MODES = [HVAC_MODE_HEAT, HVAC_MODE_AUTO]
 
@@ -133,6 +134,9 @@ class ThermostatDevice(ClimateEntity):
         self._min_temp = config.get(CONF_MIN_TEMP)
         self._max_temp = config.get(CONF_MAX_TEMP)
 
+        """
+        Standard thermostat data for the first and second edition of Toon
+        """
         self._data = None
         self._active_state = None
         self._burner_info = None
@@ -144,7 +148,7 @@ class ThermostatDevice(ClimateEntity):
         self._hvac_mode = None
 
     @staticmethod
-    async def do_api_request(session, url):
+    async def do_api_request(name, session, url):
         """
         Do an API request
         """
@@ -154,19 +158,19 @@ class ThermostatDevice(ClimateEntity):
                     url, headers={"Accept-Encoding": "identity"}
                 )
         except aiohttp.ClientError:
-            _LOGGER.error("Cannot poll Toon using url: %s", url)
+            _LOGGER.error("Cannot poll %s using url: %s", name, url)
             return None
         except asyncio.TimeoutError:
             _LOGGER.error(
-                "Timeout error occurred while polling Toon using url: %s", url
+                "Timeout error occurred while polling %s using url: %s", name, url
             )
             return None
 
         try:
             response = await response.json(content_type="text/javascript")
-            _LOGGER.debug("Data received from Toon: %s", response)
+            _LOGGER.debug("Data received from %s: %s", name, response)
         except (TypeError, KeyError) as err:
-            _LOGGER.error("Cannot parse data received from Toon: %s", err)
+            _LOGGER.error("Cannot parse data received from %s: %s", name, err)
             return None
 
         return response
@@ -180,10 +184,14 @@ class ThermostatDevice(ClimateEntity):
 
     async def async_update(self) -> None:
         """
-        Update local data with thermostat data
+        Update local data with thermostat data (Toon 1 and Toon 2)
         """
+        _LOGGER.debug(
+            "%s: request 'getThermostatInfo'", str(self._name),
+        )
+        
         self._data = await self.do_api_request(
-            self._session,
+            self._name, self._session,
             BASE_URL.format(
                 self._host, self._port,
                 "/happ_thermstat?action=getThermostatInfo"
@@ -207,6 +215,7 @@ class ThermostatDevice(ClimateEntity):
                 self._hvac_mode = HVAC_MODE_AUTO
             else:
                 self._hvac_mode = None
+
                 
     @property
     def supported_features(self) -> int:
@@ -267,21 +276,23 @@ class ThermostatDevice(ClimateEntity):
 
         value = int(target_temperature * 100)
         
+        _LOGGER.info(
+            "%s: set target temperature to %s°C",
+            str(self._name), str(target_temperature),
+        )
+
+        _LOGGER.debug(
+            "%s: request 'setSetpoint' with 'Setpoint' value %s",
+            str(self._name), str(value),
+        )
+
         self._data = await self.do_api_request(
-            self._session,
+            self._name, self._session,
             BASE_URL.format(
                 self._host, self._port,
                 "/happ_thermstat?action=setSetpoint"
                 "&Setpoint=" + str(value),
             ),
-        )
-
-        _LOGGER.info(
-            "Toon: set target temperature to %s°C", str(target_temperature),
-        )
-
-        _LOGGER.debug(
-            "Toon: request 'setSetpoint' with 'Setpoint' value %s", str(value),
         )
 
         self._current_setpoint = target_temperature
@@ -374,8 +385,20 @@ class ThermostatDevice(ClimateEntity):
             scheme_temp = -1
             scheme_state = 2
 
+        _LOGGER.info(
+            "%s: set preset mode to %s",
+            str(self._name), str(preset_mode.lower()),
+        )    
+
+        _LOGGER.debug(
+            "%s: request 'changeSchemeState' with 'state' value %s "
+            "and 'temperatureState' value %s",
+            str(self._name), str(scheme_state),
+            str(scheme_temp),
+        )
+
         self._data = await self.do_api_request(
-            self._session,
+            self._name, self._session,
             BASE_URL.format(
                 self._host, self._port,
                 "/happ_thermstat?action=changeSchemeState"
@@ -384,16 +407,6 @@ class ThermostatDevice(ClimateEntity):
             ),
         )
 
-        _LOGGER.info(
-            "Toon: set preset mode to %s",
-            str(preset_mode.lower()),
-        )    
-
-        _LOGGER.debug(
-            "Toon: request 'changeSchemeState' with 'state' value %s and 'temperatureState' value %s",
-            str(scheme_state),
-            str(scheme_temp),
-        )
 
     @property
     def hvac_modes(self) -> List[str]:
@@ -419,12 +432,17 @@ class ThermostatDevice(ClimateEntity):
         - HVAC_MODE_AUTO: Follow the configured schedule
         - HVAC_MODE_OFF: Vacation mode (heat to a target architecture)
         """
-        _LOGGER.info("Toon: set hvac mode to %s", str(hvac_mode))
+        _LOGGER.info("%s: set hvac mode to %s", str(self._name), str(hvac_mode))
 
         if (hvac_mode == HVAC_MODE_HEAT) and (self._active_state == 4):
             """ Set preset to home when returning from vacation """
+            _LOGGER.debug(
+                "%s: request 'changeSchemeState' with 'state' value %s "
+                "and 'temperatureState' value %s",
+                str(self._name), str(0), str(1),
+            )
             self._data = await self.do_api_request(
-                self._session,
+                self._name, self._session,
                 BASE_URL.format(
                     self._host, self._port,
                     "/happ_thermstat?action=changeSchemeState"
@@ -434,8 +452,12 @@ class ThermostatDevice(ClimateEntity):
             )
         elif (hvac_mode == HVAC_MODE_HEAT):
             """ No preset needs to be defined """
+            _LOGGER.debug(
+                "%s: request 'changeSchemeState' with 'state' value %s ",
+                str(self._name), str(0)
+            )
             self._data = await self.do_api_request(
-                self._session,
+                self._name, self._session,
                 BASE_URL.format(
                     self._host, self._port,
                     "/happ_thermstat?action=changeSchemeState"
@@ -444,8 +466,12 @@ class ThermostatDevice(ClimateEntity):
              )   
         elif (hvac_mode == HVAC_MODE_AUTO):
             """ No preset needs to be defined """
+            _LOGGER.debug(
+                "%s: request 'changeSchemeState' with 'state' value %s ",
+                str(self._name), str(1)
+            )
             self._data = await self.do_api_request(
-                self._session,
+                self._name, self._session,
                 BASE_URL.format(
                     self._host, self._port,
                     "/happ_thermstat?action=changeSchemeState"
@@ -457,8 +483,13 @@ class ThermostatDevice(ClimateEntity):
             For vacation mode the state needs to be set to 8 
             and the temperature preset needs to be set to 4 
             """
+            _LOGGER.debug(
+                "%s: request 'changeSchemeState' with 'state' value %s "
+                "and 'temperatureState' value %s",
+                str(self._name), str(8), str(4),
+            )
             self._data = await self.do_api_request(
-                self._session,
+                self._name, self._session,
                 BASE_URL.format(
                     self._host, self._port,
                     "/happ_thermstat?action=changeSchemeState"
