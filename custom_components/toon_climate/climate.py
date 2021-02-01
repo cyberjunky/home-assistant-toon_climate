@@ -78,8 +78,8 @@ PRESET_HOME:      The device is in home mode
 PRESET_COMFORT:   The device is in comfort mode
 PRESET_SLEEP:     The device is in Sleep mode
 PRESET_ECO:       The device runs in a continuous energy savings mode. If 
-                  configured as one of the supported presets this This mode
-                  can be used to activate the vacation mode
+                  configured as one of the supported presets this mode can
+                  be used to activate the vacation mode
 """
 SUPPORT_PRESETS = [PRESET_AWAY, PRESET_HOME, PRESET_COMFORT, PRESET_SLEEP, PRESET_ECO]
 
@@ -89,7 +89,7 @@ Supported hvac modes:
 - HVAC_MODE_HEAT: Heat to a target temperature (schedule off)
 - HVAC_MODE_AUTO: Follow the configured schedule
 - HVAC_MODE_OFF:  The device runs in a continuous energy savings mode. If 
-                  configured as one of the supported hvac modes this This mode
+                  configured as one of the supported hvac modes this mode
                   can be used to activate the vacation mode
 """
 SUPPORT_MODES = [HVAC_MODE_HEAT, HVAC_MODE_AUTO]
@@ -382,10 +382,10 @@ class ThermostatDevice(ClimateEntity):
         Set new preset mode (comfort, home, sleep, away, eco)
 
         Toon programState values
-        - 0: Programm mode is off (not automatically changing presets)
+        - 0: Programm mode is off (manually changing presets)
         - 1: Programm mode is on (automatically changing presets)
-        - 2: Programm mode is on but setpoint/preset is changed until
-             the next preset is automatically activated
+        - 2: Programm mode is on but setpoint/preset is only changed until
+             the next scheduled preset is automatically activated
         - 8: No official programm mode as according to the Toon API doc
              this would be state 4. Testing reveiled it only works when we
              use an 8. This results in the programm state to return back to
@@ -398,7 +398,8 @@ class ThermostatDevice(ClimateEntity):
         - 3: Away
         - 4: Vacation (eco)
              
-        The preset will only be set if it is part of the SUPPORT_PRESETS list
+        The requested preset will only be set if it is part of the 
+        defined SUPPORT_PRESETS list
         """
         if not(preset_mode.lower() in SUPPORT_PRESETS):
             _LOGGER.warning(
@@ -467,11 +468,12 @@ class ThermostatDevice(ClimateEntity):
         Set new target hvac mode
 
         Support modes:
-        - HVAC_MODE_HEAT: Heat to a target temperature (schedule off)
-        - HVAC_MODE_AUTO: Follow the configured schedule
+        - HVAC_MODE_HEAT: Heat to a target temperature (manual mode)
+        - HVAC_MODE_AUTO: Follow the configured schedule (schedule mode)
         - HVAC_MODE_OFF: Vacation mode (heat to a target architecture)
         
-        The hvac mode will only be set if it is part of the SUPPORT_MODES list
+        The requested hvac mode will only be set if it is part of the 
+        defined SUPPORT_MODES list
         """
         if not(str(hvac_mode) in SUPPORT_MODES):
             _LOGGER.warning(
