@@ -74,8 +74,9 @@ PRESET_AWAY:      The device is in away mode
 PRESET_HOME:      The device is in home mode
 PRESET_COMFORT:   The device is in comfort mode
 PRESET_SLEEP:     The device is in Sleep mode
-PRESET_ECO:       The device is runs a continuous energy savings mode. This
-                  mode is used to activate the vacation mode
+PRESET_ECO:       The device runs in a continuous energy savings mode. If 
+                  configured as one of the supported presets this This mode
+                  can be used to activate the vacation mode
 """
 SUPPORT_PRESETS = [PRESET_AWAY, PRESET_HOME, PRESET_COMFORT, PRESET_SLEEP, PRESET_ECO]
 
@@ -84,7 +85,9 @@ Supported hvac modes:
 
 - HVAC_MODE_HEAT: Heat to a target temperature (schedule off)
 - HVAC_MODE_AUTO: Follow the configured schedule
-- HVAC_MODE_OFF: This mode is used to activate the vacation mode
+- HVAC_MODE_OFF:  The device runs in a continuous energy savings mode. If 
+                  configured as one of the supported hvac modes this This mode
+                  can be used to activate the vacation mode
 """
 SUPPORT_MODES = [HVAC_MODE_HEAT, HVAC_MODE_AUTO]
 
@@ -92,8 +95,8 @@ DEFAULT_NAME = "Toon Thermostat"
 BASE_URL = "http://{0}:{1}{2}"
 
 """
-Toon can be set to a minumum of 6 degrees celsius
-and a maximum of 30 degrees celsius
+The Toon device can be set to a minumum of 6 degrees celsius and a maximum
+of 30 degrees celsius. The below min and max values should not be changed. 
 """
 DEFAULT_MIN_TEMP = 6.0
 DEFAULT_MAX_TEMP = 30.0
@@ -241,8 +244,7 @@ class ThermostatDevice(ClimateEntity):
                 self._hvac_mode = HVAC_MODE_AUTO
             else:
                 self._hvac_mode = None
-
-                
+   
     @property
     def supported_features(self) -> int:
         """
@@ -260,7 +262,7 @@ class ThermostatDevice(ClimateEntity):
     @property
     def temperature_unit(self) -> str:
         """
-        Return the unit of measurement (Celcius bt default)
+        Return the unit of measurement (Celcius by default)
         """
         return TEMP_CELSIUS
 
@@ -364,8 +366,8 @@ class ThermostatDevice(ClimateEntity):
         - 1: Home
         - 2: Sleep
         - 3: Away
-        - 4: Vacation (not a default home assistant climate state)
-             instead we use the PRESET_ECO to be able to activate this
+        - 4: Vacation (not a default home assistant climate state) instead we
+             use the PRESET_ECO if configured as one of the supported presets
         """
         try:
             return self._valid_presets[self._active_state]
@@ -381,18 +383,17 @@ class ThermostatDevice(ClimateEntity):
         - 1: Programm mode is on (automatically changing presets)
         - 2: Programm mode is on but setpoint/preset is changed until
              the next preset is automatically activated
-        - 8: No official programm mode as according top the Toon API doc
-             this would be state 4. Testing it reveiled it only works when
-             we use an 8. This results in the programm state to return back
-             to it's original state when another preset is selected.
+        - 8: No official programm mode as according to the Toon API doc
+             this would be state 4. Testing reveiled it only works when we
+             use an 8. This results in the programm state to return back to
+             it's original state when another preset is selected.
 
         Toon activeState values
         - 0: Comfort
         - 1: Home
         - 2: Sleep
         - 3: Away
-        - 4: Vacation (not a default home assistant climate state)
-             instead we use the PRESET_ECO to be able to activate this
+        - 4: Vacation (eco)
              
         The preset will only be set if it is part of the SUPPORT_PRESETS list
         """
@@ -444,7 +445,6 @@ class ThermostatDevice(ClimateEntity):
             ),
         )
 
-
     @property
     def hvac_modes(self) -> List[str]:
         """
@@ -458,7 +458,6 @@ class ThermostatDevice(ClimateEntity):
         Return the current operation mode
         """
         return self._hvac_mode
-    
 
     async def async_set_hvac_mode(self, hvac_mode: str) -> None:
         """
