@@ -59,7 +59,7 @@ try:
     from homeassistant.components.climate import PLATFORM_SCHEMA, ClimateEntity
 except ImportError:
     from homeassistant.components.climate import (
-        PLATFORM_SCHEMA,
+        PLATFORM_SCHEMA, 
         ClimateDevice as ClimateEntity,
     )
 
@@ -131,8 +131,12 @@ class ThermostatDevice(ClimateEntity):
         self._name = config.get(CONF_NAME)
         self._host = config.get(CONF_HOST)
         self._port = config.get(CONF_PORT)
-        self._min_temp = config.get(CONF_MIN_TEMP)
-        self._max_temp = config.get(CONF_MAX_TEMP)
+        self._min_temp = (config.get(CONF_MIN_TEMP) 
+                          if config.get(CONF_MIN_TEMP) >= DEFAULT_MIN_TEMP 
+                          else DEFAULT_MIN_TEMP)
+        self._max_temp = (config.get(CONF_MAX_TEMP) 
+                          if config.get(CONF_MAX_TEMP) <= DEFAULT_MAX_TEMP 
+                          else DEFAULT_MAX_TEMP)
 
         """
         Standard thermostat data for the first and second edition of Toon
@@ -146,6 +150,28 @@ class ThermostatDevice(ClimateEntity):
         self._ot_comm_error = None
         self._program_state = None
         self._hvac_mode = None
+        
+        """
+        Dynamically construct valid preset list
+        0: PRESET_COMFORT
+        1: PRESET_HOME
+        2: PRESET_SLEEP
+        3: PRESET_AWAY
+        4: PRESET_ECO     
+        """
+        self._valid_presets = {}
+        if (PRESET_COMFORT in SUPPORT_PRESETS): self._valid_presets[0] = PRESET_COMFORT
+        if (PRESET_HOME in SUPPORT_PRESETS): self._valid_presets[1] = PRESET_HOME
+        if (PRESET_SLEEP in SUPPORT_PRESETS): self._valid_presets[2] = PRESET_SLEEP
+        if (PRESET_AWAY in SUPPORT_PRESETS): self._valid_presets[3] = PRESET_AWAY
+        if (PRESET_ECO in SUPPORT_PRESETS): self._valid_presets[4] = PRESET_ECO
+        
+        _LOGGER.info("%s: Supported hvac modes %s. " 
+                     "Supported preset modes %s. "
+                     "Temperature can be set between %s°C and %s°C", 
+                      str(self._name), SUPPORT_MODES, 
+                      SUPPORT_PRESETS,
+                      self._min_temp, self._max_temp)
 
     @staticmethod
     async def do_api_request(name, session, url):
@@ -275,7 +301,16 @@ class ThermostatDevice(ClimateEntity):
             return
 
         value = int(target_temperature * 100)
-        
+   
+        if ((target_temperature < self._min_temp) or 
+            (target_temperature > self._max_temp)):
+            _LOGGER.warning(
+                "%s: set target temperature to %s°C is not supported. "
+                "The temperature can be set between %s°C and %s°C", 
+                str(self._name), str(target_temperature), 
+                self._min_temp, self._max_temp)
+            return
+   
         _LOGGER.info(
             "%s: set target temperature to %s°C",
             str(self._name), str(target_temperature),
@@ -332,15 +367,8 @@ class ThermostatDevice(ClimateEntity):
         - 4: Vacation (not a default home assistant climate state)
              instead we use the PRESET_ECO to be able to activate this
         """
-        presets = {
-            0: PRESET_COMFORT,
-            1: PRESET_HOME,
-            2: PRESET_SLEEP,
-            3: PRESET_AWAY,
-            4: PRESET_ECO,
-        }
         try:
-            return presets[self._active_state]
+            return self._valid_presets[self._active_state]
         except KeyError:
             return None
 
@@ -365,7 +393,16 @@ class ThermostatDevice(ClimateEntity):
         - 3: Away
         - 4: Vacation (not a default home assistant climate state)
              instead we use the PRESET_ECO to be able to activate this
+             
+        The preset will only be set if it is part of the SUPPORT_PRESETS list
         """
+        if not(preset_mode.lower() in SUPPORT_PRESETS):
+            _LOGGER.warning(
+                "%s: set preset mode to '%s' is not supported. " 
+                "Supported preset modes are %s", 
+                str(self._name), str(preset_mode.lower()), SUPPORT_PRESETS)
+            return None
+        
         if preset_mode.lower() == PRESET_COMFORT:
             scheme_temp = 0
             scheme_state = 2
@@ -386,7 +423,7 @@ class ThermostatDevice(ClimateEntity):
             scheme_state = 2
 
         _LOGGER.info(
-            "%s: set preset mode to %s",
+            "%s: set preset mode to '%s'",
             str(self._name), str(preset_mode.lower()),
         )    
 
@@ -416,7 +453,7 @@ class ThermostatDevice(ClimateEntity):
         return SUPPORT_MODES
 
     @property
-    def hvac_mode(self) -> str:
+    def hvac_mode(self) -> Optional[str]:
         """
         Return the current operation mode
         """
@@ -431,9 +468,18 @@ class ThermostatDevice(ClimateEntity):
         - HVAC_MODE_HEAT: Heat to a target temperature (schedule off)
         - HVAC_MODE_AUTO: Follow the configured schedule
         - HVAC_MODE_OFF: Vacation mode (heat to a target architecture)
+        
+        The hvac mode will only be set if it is part of the SUPPORT_MODES list
         """
-        _LOGGER.info("%s: set hvac mode to %s", str(self._name), str(hvac_mode))
-
+        if not(str(hvac_mode) in SUPPORT_MODES):
+            _LOGGER.warning(
+                "%s: set hvac mode to '%s' is not supported. " 
+                "Supported hvac modes are %s", 
+                str(self._name), str(hvac_mode), SUPPORT_MODES)
+            return None
+        
+        _LOGGER.info("%s: set hvac mode to '%s'", str(self._name), str(hvac_mode))
+      
         if (hvac_mode == HVAC_MODE_HEAT) and (self._active_state == 4):
             """ Set preset to home when returning from vacation """
             _LOGGER.debug(
