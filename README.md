@@ -209,6 +209,8 @@ sensor:
         friendly_name: "Temperatuur Woonkamer"
         value_template: "{{ state_attr('climate.toon','current_temperature') }}"
         unit_of_measurement: °C
+        device_class: temperature
+        state_class: measurement        
 ```
 
 
@@ -223,6 +225,7 @@ sensor:
       - tvoc
       - eco2
     value_template: '{{ value_json["temperature"] }}'
+    device_class: temperature
     unit_of_measurement: "°C"
     resource: http://192.168.2.106/tsc/sensors
 
@@ -231,18 +234,18 @@ sensor:
       toon2_humidity:
         friendly_name: "Humidity"
         value_template: '{{ states.sensor.toon2_airsensors.attributes["humidity"] }}'
-        unit_of_measurement: "%"
-        icon_template: "mdi:water-percent"
+        device_class: humidity
+        state_class: measurement
       toon2_tvoc:
         friendly_name: "TVOC"
         value_template: '{{ states.sensor.toon2_airsensors.attributes["tvoc"] }}'
-        unit_of_measurement: "ppb"
-        icon_template: "mdi:air-filter"
+        device_class: volatile_organic_compounds
+        state_class: measurement
       toon2_eco2:
         friendly_name: "eCO2"
         value_template: '{{ states.sensor.toon2_airsensors.attributes["eco2"] }}'
-        unit_of_measurement: "ppm"
-        icon_template: "mdi:molecule-co2"
+        device_class: carbon_dioxide
+        state_class: measurement
 ```
 
 
