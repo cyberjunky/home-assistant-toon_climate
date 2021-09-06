@@ -202,15 +202,13 @@ sensor:
 If you want a sensor that allows you to show the current room temperature (e.g. in a badge) add the following:
 
 ```yaml
-sensor:
-  - platform: template
-    sensors:
-      temperatuur_woonkamer:
-        friendly_name: "Temperatuur Woonkamer"
-        value_template: "{{ state_attr('climate.toon','current_temperature') }}"
-        unit_of_measurement: °C
-        device_class: temperature
-        state_class: measurement        
+template:
+  - sensor:
+    - name: "Temperatuur Woonkamer"
+      state: "{{ state_attr('climate.toon','current_temperature') }}"
+      unit_of_measurement: °C
+      device_class: temperature
+      state_class: measurement        
 ```
 
 
@@ -229,35 +227,30 @@ sensor:
     unit_of_measurement: "°C"
     resource: http://192.168.2.106/tsc/sensors
 
-  - platform: template
-    sensors:
-      toon2_humidity:
-        friendly_name: "Humidity"
-        value_template: '{{ states.sensor.toon2_airsensors.attributes["humidity"] }}'
-        device_class: humidity
-        state_class: measurement
-      toon2_tvoc:
-        friendly_name: "TVOC"
-        value_template: '{{ states.sensor.toon2_airsensors.attributes["tvoc"] }}'
-        device_class: volatile_organic_compounds
-        state_class: measurement
-      toon2_eco2:
-        friendly_name: "eCO2"
-        value_template: '{{ states.sensor.toon2_airsensors.attributes["eco2"] }}'
-        device_class: carbon_dioxide
-        state_class: measurement
+template:
+  - sensor:
+    - name: "Toon2 Humidity"
+      state: '{{ states.sensor.toon2_airsensors.attributes["humidity"] }}'
+      device_class: humidity
+      state_class: measurement
+    - name: "Toon2 TVOC"
+      state: '{{ states.sensor.toon2_airsensors.attributes["tvoc"] }}'
+      device_class: volatile_organic_compounds
+      state_class: measurement
+    - name: "Toon2 eCO2"
+      state: '{{ states.sensor.toon2_airsensors.attributes["eco2"] }}'
+      device_class: carbon_dioxide
+      state_class: measurement
 ```
 
 
 You can create a sensor with more heating information like so:
 
 ```yaml
-sensor:
-  - platform: template
-    sensors:
-      toon_driewegklep:
-        friendly_name: 'Driewegklep'
-        value_template: >-
+template:
+  - sensor:
+    - name: "Toon Driewegklep"
+      state: >-
           {% if is_state_attr('climate.toon','burner_info', 0) %}
              Neutraal
           {% elif is_state_attr('climate.toon','burner_info', 1) %}
