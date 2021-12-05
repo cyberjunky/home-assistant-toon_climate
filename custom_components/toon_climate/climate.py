@@ -195,7 +195,7 @@ class ThermostatDevice(ClimateEntity):
         Do an API request
         """
         try:
-            with async_timeout.timeout(5):
+            async with async_timeout.timeout(5):
                 response = await session.get(
                     url, headers={"Accept-Encoding": "identity"}
                 )
