@@ -556,7 +556,7 @@ class ThermostatDevice(ClimateEntity):
             )
 
     @property
-    def device_state_attributes(self) -> Dict[str, Any]:
+    def extra_state_attributes(self) -> Dict[str, Any]:
         """
         Return additional Toon Thermostat status details
 
