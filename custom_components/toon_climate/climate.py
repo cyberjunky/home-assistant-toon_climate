@@ -148,6 +148,7 @@ class ThermostatDevice(ClimateEntity):
         self._max_temp = (config.get(CONF_MAX_TEMP)
                           if config.get(CONF_MAX_TEMP) <= DEFAULT_MAX_TEMP
                           else DEFAULT_MAX_TEMP)
+        self._attr_unique_id = f"climate_{self._name}_{self._host}"
 
         """
         Standard thermostat data for the first and second edition of Toon
