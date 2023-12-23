@@ -162,6 +162,7 @@ class ThermostatDevice(ClimateEntity):
         self._ot_comm_error = None
         self._program_state = None
         self._hvac_mode = None
+        self._boiler_setpoint = None
 
         """
         Dynamically construct valid preset list
@@ -253,6 +254,7 @@ class ThermostatDevice(ClimateEntity):
             self._current_temperature = int(self._data["currentTemp"]) / 100
             self._ot_comm_error = int(self._data["otCommError"])
             self._program_state = int(self._data["programState"])
+            self._boiler_setpoint = int(self._data["currentInternalBoilerSetpoint"])
 
             if self._active_state == 4:
                 self._hvac_mode = HVAC_MODE_OFF
@@ -567,4 +569,5 @@ class ThermostatDevice(ClimateEntity):
         return {
             "burner_info": self._burner_info,
             "modulation_level": self._modulation_level,
+            "boiler_setpoint": self._boiler_setpoint,
         }
