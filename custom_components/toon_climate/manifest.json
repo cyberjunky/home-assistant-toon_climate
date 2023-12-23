@@ -1,7 +1,7 @@
 {
   "domain": "toon_climate",
   "name": "Toon Climate",
-  "version": "1.0.12",
+  "version": "1.0.14",
   "documentation": "https://github.com/cyberjunky/home-assistant-toon_climate",
   "issue_tracker": "https://github.com/cyberjunky/home-assistant-toon_climate/issues",
   "requirements": [],
