@@ -260,6 +260,26 @@ template:
           {% endif %}
 ```
 
+Trigger on burner state change (example from CV to Neutral):
+```yaml
+
+automation:
+  - alias: "Detect Burnerstate change"
+    trigger:
+      platform: state
+      entity_id: climate.toon_thermostat
+    condition:
+      condition: template
+      value_template: >
+        {{ trigger.from_state and
+            trigger.to_state.attributes.burner_info == 0 and
+            trigger.from_state.attributes.burner_info == 1}}
+    action:
+      service: persistent_notification.create
+      data:
+        message: Burner state changed!
+        title: "Thermostat Info"
+```
           
 You can also control the Toon device with Google's assistant.
 
