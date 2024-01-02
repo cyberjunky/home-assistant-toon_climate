@@ -1,11 +1,11 @@
 {
   "domain": "toon_climate",
   "name": "Toon Climate",
-  "version": "1.0.16",
-  "documentation": "https://github.com/cyberjunky/home-assistant-toon_climate",
-  "issue_tracker": "https://github.com/cyberjunky/home-assistant-toon_climate/issues",
-  "iot_class": "local_polling",
-  "requirements": [],
+  "codeowners": ["@cyberjunky"],
   "dependencies": [],
-  "codeowners": ["@cyberjunky"]
+  "documentation": "https://github.com/cyberjunky/home-assistant-toon_climate",
+  "iot_class": "local_polling",
+  "issue_tracker": "https://github.com/cyberjunky/home-assistant-toon_climate/issues",
+  "requirements": [],
+  "version": "1.0.16",
 }
