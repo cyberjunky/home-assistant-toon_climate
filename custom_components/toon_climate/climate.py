@@ -172,29 +172,25 @@ class ThermostatDevice(ClimateEntity):
         """
         Do an API request
         """
+        toon_data = {}
         try:
             async with async_timeout.timeout(5):
                 response = await session.get(
                     url, headers={"Accept-Encoding": "identity"}
                 )
+            toon_data = await response.json(content_type="text/javascript")
+            _LOGGER.debug("Data received from %s: %s", name, toon_data)
         except aiohttp.ClientError:
-            _LOGGER.error("Cannot poll %s using url: %s", name, url)
-            return None
+            _LOGGER.error("Cannot connect to %s using url '%s'", name, url)
         except asyncio.TimeoutError:
             _LOGGER.error(
-                "Timeout error occurred while polling %s using url: %s",
+                "Timeout error occurred while connecting to %s using url '%s'",
                 name, url
             )
-            return None
-
-        try:
-            response = await response.json(content_type="text/javascript")
-            _LOGGER.debug("Data received from %s: %s", name, response)
         except (TypeError, KeyError) as err:
-            _LOGGER.error("Cannot parse data received from %s: %s", name, err)
-            return None
+            _LOGGER.error(f"Cannot parse data received from %s: %s", name, err)
 
-        return response
+        return toon_data
 
     @property
     def should_poll(self):
