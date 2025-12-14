@@ -1,5 +1,5 @@
 {
-  "name": "cyberjunky/home-assistant-garmin_connect",
+  "name": "Toon Climate Integration",
   "image": "mcr.microsoft.com/devcontainers/python:1-3.13",
   "postCreateCommand": "scripts/setup",
   "forwardPorts": [

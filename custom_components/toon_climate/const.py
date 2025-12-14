@@ -1,6 +1,6 @@
 """Constants for the Toon Thermostat."""
 
-DOMAIN = "toon_climate"
+DOMAIN = "climate"
 
 ACTIVE_STATE_AWAY = 3
 ACTIVE_STATE_COMFORT = 0

@@ -139,7 +139,7 @@ class ThermostatDevice(ClimateEntity):
             config.get(CONF_MAX_TEMP, DEFAULT_MAX_TEMP),
             DEFAULT_MAX_TEMP
         )
-        self._attr_unique_id = f"toon_climate_{self._host}_{self._port}"
+        self._attr_unique_id = f"climate_{self._name}_{self._host}"
         self._attr_name = self._name
         self._attr_hvac_modes = SUPPORT_MODES
         self._attr_preset_modes = SUPPORT_PRESETS

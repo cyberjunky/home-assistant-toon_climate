@@ -24,6 +24,12 @@
         "label": "Run lint checks",
         "problemMatcher": [],
         "type": "shell"
+      },
+      {
+        "label": "Rebuild Container",
+        "type": "shell",
+        "command": "echo 'To rebuild the container, use Command Palette (Ctrl+Shift+P / Cmd+Shift+P) and select: Dev Containers: Rebuild Container'",
+        "problemMatcher": []
       }
     ],
     "version": "2.0.0"
