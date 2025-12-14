@@ -5,17 +5,17 @@ Only for the rooted version.
 configuration.yaml
 
 climate:
-    - platform: toon_climate
-        name: Toon Thermostat
-        host: <IP_ADDRESS>
-        port: 80
-        scan_interval: 10
-        min_temp: 6.0
-        max_temp: 30.0
+  - platform: toon_climate
+    name: Toon Thermostat
+    host: <IP_ADDRESS>
+    port: 80
+    scan_interval: 10
+    min_temp: 6.0
+    max_temp: 30.0
 
 logger:
-    default: info
-    logs:
+  default: info
+  logs:
     custom_components.toon_climate: debug
 
 More details:
@@ -31,7 +31,6 @@ import aiohttp
 import async_timeout
 import voluptuous as vol
 
-
 from homeassistant.const import (
     ATTR_TEMPERATURE,
     CONF_HOST,
@@ -41,32 +40,27 @@ from homeassistant.const import (
 )
 
 from homeassistant.helpers.aiohttp_client import async_get_clientsession
-
 import homeassistant.helpers.config_validation as cv
 
 from homeassistant.components.climate import (
     PLATFORM_SCHEMA,
-    PRESET_AWAY,
-    PRESET_COMFORT,
-    PRESET_HOME,
-    PRESET_ECO,
-    PRESET_SLEEP,
     ClimateEntity,
     ClimateEntityFeature,
     HVACAction,
     HVACMode,
-)
-
-from .const import (
-    DOMAIN,
-    ACTIVE_STATE_AWAY,
-    ACTIVE_STATE_COMFORT,
-    ACTIVE_STATE_HOME,
-    ACTIVE_STATE_SLEEP,
-    ACTIVE_STATE_HOLIDAY,
+    PRESET_AWAY,
+    PRESET_COMFORT,
+    PRESET_ECO,
+    PRESET_HOME,
+    PRESET_SLEEP,
 )
 
 _LOGGER = logging.getLogger(__name__)
+
+SUPPORT_FLAGS = (
+    ClimateEntityFeature.TARGET_TEMPERATURE | 
+    ClimateEntityFeature.PRESET_MODE
+)
 
 """
 Supported preset modes:
@@ -76,18 +70,16 @@ PRESET_HOME:      The device is in home mode
 PRESET_COMFORT:   The device is in comfort mode
 PRESET_SLEEP:     The device is in Sleep mode
 PRESET_ECO:       The device runs in a continuous energy savings mode. If
-                configured as one of the supported presets this mode can
-                be used to activate the vacation mode
+                  configured as one of the supported presets this mode can
+                  be used to activate the vacation mode
 """
 SUPPORT_PRESETS = [PRESET_AWAY, PRESET_HOME, PRESET_COMFORT, PRESET_SLEEP, PRESET_ECO]
 
 """
 Supported hvac modes:
+
 - HVACMode.HEAT: Heat to a target temperature (schedule off)
 - HVACMode.AUTO: Follow the configured schedule
-- HVACMode.OFF:  The device runs in a continuous energy savings mode. If
-                configured as one of the supported hvac modes this mode
-                can be used to activate the vacation mode
 """
 SUPPORT_MODES = [HVACMode.HEAT, HVACMode.AUTO]
 
@@ -108,10 +100,8 @@ PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend(
         vol.Optional(CONF_NAME, default=DEFAULT_NAME): cv.string,
         vol.Required(CONF_HOST): cv.string,
         vol.Optional(CONF_PORT, default=80): cv.positive_int,
-        vol.Optional(CONF_MIN_TEMP, default=DEFAULT_MIN_TEMP):
-            vol.Coerce(float),
-        vol.Optional(CONF_MAX_TEMP, default=DEFAULT_MAX_TEMP):
-            vol.Coerce(float),
+        vol.Optional(CONF_MIN_TEMP, default=DEFAULT_MIN_TEMP): vol.Coerce(float),
+        vol.Optional(CONF_MAX_TEMP, default=DEFAULT_MAX_TEMP): vol.Coerce(float),
     }
 )
 
@@ -122,18 +112,10 @@ async def async_setup_platform(hass, config, add_devices, discovery_info=None):
     session = async_get_clientsession(hass)
     add_devices([ThermostatDevice(session, config)], True)
 
-
 class ThermostatDevice(ClimateEntity):
     """
     Representation of a Toon climate device
     """
-    _attr_name = "Thermostat"
-    _attr_icon = "mdi:thermostat"
-    _attr_hvac_mode = HVACMode.HEAT
-    _attr_supported_features = (
-        ClimateEntityFeature.TARGET_TEMPERATURE | ClimateEntityFeature.PRESET_MODE
-    )
-    _attr_temperature_unit = UnitOfTemperature.CELSIUS
 
     def __init__(self, session, config) -> None:
         """
@@ -144,14 +126,16 @@ class ThermostatDevice(ClimateEntity):
         self._host = config.get(CONF_HOST)
         self._port = config.get(CONF_PORT)
         self._min_temp = (config.get(CONF_MIN_TEMP)
-                        if config.get(CONF_MIN_TEMP) >= DEFAULT_MIN_TEMP
-                        else DEFAULT_MIN_TEMP)
+                          if config.get(CONF_MIN_TEMP) >= DEFAULT_MIN_TEMP
+                          else DEFAULT_MIN_TEMP)
         self._max_temp = (config.get(CONF_MAX_TEMP)
-                        if config.get(CONF_MAX_TEMP) <= DEFAULT_MAX_TEMP
-                        else DEFAULT_MAX_TEMP)
-        self._attr_unique_id = f"{DOMAIN}_{self._name}_{self._host}"
+                          if config.get(CONF_MAX_TEMP) <= DEFAULT_MAX_TEMP
+                          else DEFAULT_MAX_TEMP)
+        self._attr_unique_id = f"climate_{self._name}_{self._host}"
         self._attr_hvac_modes = SUPPORT_MODES
         self._attr_preset_modes = SUPPORT_PRESETS
+        self._attr_supported_features = SUPPORT_FLAGS
+        self._attr_temperature_unit = UnitOfTemperature.CELSIUS
 
         """
         Standard thermostat data for the first and second edition of Toon
@@ -165,32 +149,33 @@ class ThermostatDevice(ClimateEntity):
         self._ot_comm_error = None
         self._program_state = None
         self._hvac_mode = None
-        self._boiler_setpoint = None
+
+        _LOGGER.info("%s: Supported hvac modes %s. "
+                     "Supported preset modes %s. "
+                     "Temperature can be set between %s°C and %s°C",
+                     self._name, SUPPORT_MODES,
+                     SUPPORT_PRESETS,
+                     self._min_temp, self._max_temp)
 
     @staticmethod
     async def do_api_request(name, session, url):
         """
         Do an API request
         """
-        toon_data = {}
         try:
             async with async_timeout.timeout(5):
                 response = await session.get(
                     url, headers={"Accept-Encoding": "identity"}
                 )
-            toon_data = await response.json(content_type="text/javascript")
-            _LOGGER.debug("Data received from %s: %s", name, toon_data)
-        except aiohttp.ClientError:
-            _LOGGER.error("Cannot connect to %s using url '%s'", name, url)
-        except asyncio.TimeoutError:
-            _LOGGER.error(
-                "Timeout error occurred while connecting to %s using url '%s'",
-                name, url
-            )
-        except (TypeError, KeyError) as err:
-            _LOGGER.error(f"Cannot parse data received from %s: %s", name, err)
+            response = await response.json(content_type="text/javascript")
+            _LOGGER.debug("Data received from %s: %s",
+                          name, response)
+        except (aiohttp.ClientError, asyncio.TimeoutError, TypeError, KeyError) as err:
+            _LOGGER.error("Cannot poll %s using url: %s - %s",
+                          name, url, err)
+            return None
 
-        return toon_data
+        return response
 
     @property
     def should_poll(self):
@@ -223,7 +208,6 @@ class ThermostatDevice(ClimateEntity):
             self._current_temperature = int(self._data["currentTemp"]) / 100
             self._ot_comm_error = int(self._data["otCommError"])
             self._program_state = int(self._data["programState"])
-            self._boiler_setpoint = int(self._data["currentInternalBoilerSetpoint"])
 
             if self._active_state == 4:
                 self._hvac_mode = HVACMode.OFF
@@ -233,6 +217,8 @@ class ThermostatDevice(ClimateEntity):
                 self._hvac_mode = HVACMode.AUTO
             else:
                 self._hvac_mode = None
+
+            self._attr_hvac_mode = self._hvac_mode
 
     @property
     def name(self) -> str:
@@ -288,6 +274,11 @@ class ThermostatDevice(ClimateEntity):
                 self._min_temp, self._max_temp)
             return
 
+        _LOGGER.info(
+            "%s: set target temperature to %s°C",
+            self._name, str(target_temperature),
+        )
+
         _LOGGER.debug(
             "%s: request 'setSetpoint' with 'Setpoint' value %s",
             self._name, str(value),
@@ -297,15 +288,14 @@ class ThermostatDevice(ClimateEntity):
             self._name, self._session,
             BASE_URL.format(
                 self._host, self._port,
-                "/happ_thermstat?action=setSetpoint"
-                "&Setpoint=" + str(value),
+                f"/happ_thermstat?action=setSetpoint&Setpoint={value}",
             ),
         )
 
         self._current_setpoint = target_temperature
 
     @property
-    def hvac_action(self) -> HVACAction:
+    def hvac_action(self) -> Optional[HVACAction]:
         """
         Return the current running hvac operation
 
@@ -317,13 +307,12 @@ class ThermostatDevice(ClimateEntity):
         """
         if (self._burner_info == 1) or (self._burner_info == 3):
             return HVACAction.HEATING
-
         return HVACAction.IDLE
 
     @property
-    def preset_mode(self) -> str | None:
+    def preset_mode(self) -> Optional[str]:
         """
-        Return the current preset mode.
+        Return the current preset mode
 
         Toon activeState values
         - 0: Comfort
@@ -331,70 +320,50 @@ class ThermostatDevice(ClimateEntity):
         - 2: Sleep
         - 3: Away
         - 4: Vacation (not a default home assistant climate state) instead we
-                use the PRESET_ECO if configured as one of the supported presets
+             use the PRESET_ECO if configured as one of the supported presets
         """
         mapping = {
-            ACTIVE_STATE_AWAY: PRESET_AWAY,
-            ACTIVE_STATE_COMFORT: PRESET_COMFORT,
-            ACTIVE_STATE_HOME: PRESET_HOME,
-            ACTIVE_STATE_SLEEP: PRESET_SLEEP,
-            ACTIVE_STATE_HOLIDAY: PRESET_ECO
+            0: PRESET_COMFORT,
+            1: PRESET_HOME,
+            2: PRESET_SLEEP,
+            3: PRESET_AWAY,
+            4: PRESET_ECO
         }
         return mapping.get(self._active_state)
 
     async def async_set_preset_mode(self, preset_mode) -> None:
         """
         Set new preset mode (comfort, home, sleep, away, eco)
-
-        Toon programState values
-        - 0: Programm mode is off (manually changing presets)
-        - 1: Programm mode is on (automatically changing presets)
-        - 2: Programm mode is on but setpoint/preset is only changed until
-                the next scheduled preset is automatically activated
-        - 8: No official programm mode as according to the Toon API doc
-                this would be state 4. Testing reveiled it only works when we
-                use an 8. This results in the programm state to return back to
-                it's original state when another preset is selected.
-
-        Toon activeState values
-        - 0: Comfort
-        - 1: Home
-        - 2: Sleep
-        - 3: Away
-        - 4: Vacation (eco)
-
-        The requested preset will only be set if it is part of the
-        defined SUPPORT_PRESETS list
         """
-        if not preset_mode.lower() in SUPPORT_PRESETS:
+        preset_lower = preset_mode.lower()
+        if preset_lower not in SUPPORT_PRESETS:
             _LOGGER.warning(
                 "%s: set preset mode to '%s' is not supported. "
                 "Supported preset modes are %s",
-                self._name, str(preset_mode.lower()), SUPPORT_PRESETS)
-            return None
+                self._name, preset_lower, SUPPORT_PRESETS)
+            return
 
-        if preset_mode.lower() == PRESET_COMFORT:
+        if preset_lower == PRESET_COMFORT:
             scheme_temp = 0
             scheme_state = 2
-        elif preset_mode.lower() == PRESET_HOME:
+        elif preset_lower == PRESET_HOME:
             scheme_temp = 1
             scheme_state = 2
-        elif preset_mode.lower() == PRESET_SLEEP:
+        elif preset_lower == PRESET_SLEEP:
             scheme_temp = 2
             scheme_state = 2
-        elif preset_mode.lower() == PRESET_AWAY:
+        elif preset_lower == PRESET_AWAY:
             scheme_temp = 3
             scheme_state = 2
-        elif preset_mode.lower() == PRESET_ECO:
+        elif preset_lower == PRESET_ECO:
             scheme_temp = 4
             scheme_state = 8
         else:
-            scheme_temp = -1
-            scheme_state = 2
+            return
 
-        _LOGGER.debug(
+        _LOGGER.info(
             "%s: set preset mode to '%s'",
-            self._name, str(preset_mode.lower()),
+            self._name, preset_lower,
         )
 
         _LOGGER.debug(
@@ -408,90 +377,9 @@ class ThermostatDevice(ClimateEntity):
             self._name, self._session,
             BASE_URL.format(
                 self._host, self._port,
-                "/happ_thermstat?action=changeSchemeState"
-                "&state=" + str(scheme_state) +
-                "&temperatureState=" + str(scheme_temp),
+                f"/happ_thermstat?action=changeSchemeState&state={scheme_state}&temperatureState={scheme_temp}",
             ),
         )
-
-    async def async_set_hvac_mode(self, hvac_mode: str) -> None:
-        """
-        Set new target hvac mode
-
-        Support modes:
-        - HVACMode.HEAT: Heat to a target temperature (schedule off)
-        - HVACMode.AUTO: Follow the configured schedule
-        - HVACMode.OFF:  The device runs in a continuous energy savings mode. If
-                        configured as one of the supported hvac modes this mode
-                        can be used to activate the vacation mode
-        The requested hvac mode will only be set if it is part of the
-        defined SUPPORT_MODES list
-        """
-        if hvac_mode not in SUPPORT_MODES:
-            _LOGGER.error(
-                "%s: set hvac mode to '%s' is not supported. "
-                "Supported hvac modes are %s",
-                self._name, str(hvac_mode), SUPPORT_MODES)
-            return None
-
-        _LOGGER.debug("%s: set hvac mode to '%s'", self._name, str(hvac_mode))
-
-        if (hvac_mode == HVACMode.HEAT) and (self._active_state == 4):
-            _LOGGER.debug(
-                "%s: request 'changeSchemeState' with 'state' value %s "
-                "and 'temperatureState' value %s",
-                self._name, str(0), str(1),
-            )
-            self._data = await self.do_api_request(
-                self._name, self._session,
-                BASE_URL.format(
-                    self._host, self._port,
-                    "/happ_thermstat?action=changeSchemeState"
-                    "&state=0"
-                    "&temperatureState=1",
-                ),
-            )
-        elif hvac_mode == HVACMode.HEAT:
-            _LOGGER.debug(
-                "%s: request 'changeSchemeState' with 'state' value %s ",
-                self._name, str(0)
-            )
-            self._data = await self.do_api_request(
-                self._name, self._session,
-                BASE_URL.format(
-                    self._host, self._port,
-                    "/happ_thermstat?action=changeSchemeState"
-                    "&state=0",
-                ),
-            )
-        elif hvac_mode == HVACMode.AUTO:
-            _LOGGER.debug(
-                "%s: request 'changeSchemeState' with 'state' value %s ",
-                self._name, str(1)
-            )
-            self._data = await self.do_api_request(
-                self._name, self._session,
-                BASE_URL.format(
-                    self._host, self._port,
-                    "/happ_thermstat?action=changeSchemeState"
-                    "&state=1",
-                ),
-            )
-        elif hvac_mode == HVACMode.OFF:
-            _LOGGER.debug(
-                "%s: request 'changeSchemeState' with 'state' value %s "
-                "and 'temperatureState' value %s",
-                self._name, str(8), str(4),
-            )
-            self._data = await self.do_api_request(
-                self._name, self._session,
-                BASE_URL.format(
-                    self._host, self._port,
-                    "/happ_thermstat?action=changeSchemeState"
-                    "&state=8"
-                    "&temperatureState=4",
-                ),
-            )
 
     @property
     def hvac_mode(self) -> Optional[str]:
@@ -500,17 +388,43 @@ class ThermostatDevice(ClimateEntity):
         """
         return self._hvac_mode
 
+    async def async_set_hvac_mode(self, hvac_mode: str) -> None:
+        """
+        Set new target hvac mode
+        """
+        if hvac_mode not in SUPPORT_MODES:
+            _LOGGER.warning(
+                "%s: set hvac mode to '%s' is not supported. "
+                "Supported hvac modes are %s",
+                self._name, str(hvac_mode), SUPPORT_MODES)
+            return
+
+        _LOGGER.info("%s: set hvac mode to '%s'", self._name, str(hvac_mode))
+
+        if hvac_mode == HVACMode.HEAT:
+            if self._active_state == 4:
+                url = f"/happ_thermstat?action=changeSchemeState&state=0&temperatureState=1"
+            else:
+                url = "/happ_thermstat?action=changeSchemeState&state=0"
+        elif hvac_mode == HVACMode.AUTO:
+            url = "/happ_thermstat?action=changeSchemeState&state=1"
+        else:
+            return
+
+        self._data = await self.do_api_request(
+            self._name, self._session,
+            BASE_URL.format(
+                self._host, self._port,
+                url,
+            ),
+        )
+
     @property
     def extra_state_attributes(self) -> Dict[str, Any]:
         """
         Return additional Toon Thermostat status details
-
-        The information will be available in Home Assistant for reporting
-        or automations based on teh provided information
         """
         return {
             "burner_info": self._burner_info,
             "modulation_level": self._modulation_level,
-            "boiler_setpoint": self._boiler_setpoint,
-            "opentherm_comm_error": self._ot_comm_error,
         }
