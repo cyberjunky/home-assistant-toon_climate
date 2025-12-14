@@ -5,7 +5,7 @@ mypy==1.15.0
 pre-commit==4.1.0
 pre-commit-hooks==5.0.0
 pyupgrade==3.19.1
-ruff==0.9.6
+ruff==0.14.9
 types-pytz==2025.1.0.20250204
 vulture==2.14
 pylint==3.3.4
