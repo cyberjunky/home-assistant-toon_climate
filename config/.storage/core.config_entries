@@ -1,0 +1,14 @@
+{
+  "version": 1,
+  "minor_version": 5,
+  "key": "core.config_entries",
+  "data": {
+    "entries": [
+      {"created_at":"2025-12-14T14:05:21.168127+00:00","data":{},"disabled_by":null,"discovery_keys":{},"domain":"sun","entry_id":"01KCEJW8CG7T9MR85ZF9XK3PS2","minor_version":1,"modified_at":"2025-12-14T14:05:21.168134+00:00","options":{},"pref_disable_new_entities":false,"pref_disable_polling":false,"source":"import","subentries":[],"title":"Sun","unique_id":null,"version":1},
+      {"created_at":"2025-12-14T14:51:49.189958+00:00","data":{},"disabled_by":null,"discovery_keys":{},"domain":"backup","entry_id":"01KCENHB25A0RQB43Q1HDH9PZ0","minor_version":1,"modified_at":"2025-12-14T14:51:49.189963+00:00","options":{},"pref_disable_new_entities":false,"pref_disable_polling":false,"source":"system","subentries":[],"title":"Backup","unique_id":null,"version":1},
+      {"created_at":"2025-12-14T14:55:27.394383+00:00","data":{},"disabled_by":null,"discovery_keys":{},"domain":"shopping_list","entry_id":"01KCENR052G4GYG0GXVDD13J84","minor_version":1,"modified_at":"2025-12-14T14:55:27.394388+00:00","options":{},"pref_disable_new_entities":false,"pref_disable_polling":false,"source":"onboarding","subentries":[],"title":"Shopping list","unique_id":"shopping_list","version":1},
+      {"created_at":"2025-12-14T14:55:27.713915+00:00","data":{"language":"en","tld":"com"},"disabled_by":null,"discovery_keys":{},"domain":"google_translate","entry_id":"01KCENR0F1ZZ5DM9G2QBMCVSRT","minor_version":1,"modified_at":"2025-12-14T14:55:27.713920+00:00","options":{},"pref_disable_new_entities":false,"pref_disable_polling":false,"source":"onboarding","subentries":[],"title":"Google Translate text-to-speech","unique_id":null,"version":1},
+      {"created_at":"2025-12-14T14:55:29.092335+00:00","data":{},"disabled_by":null,"discovery_keys":{},"domain":"radio_browser","entry_id":"01KCENR1T4R7EVSZD2SH3A1Y5X","minor_version":1,"modified_at":"2025-12-14T14:55:29.092339+00:00","options":{},"pref_disable_new_entities":false,"pref_disable_polling":false,"source":"onboarding","subentries":[],"title":"Radio Browser","unique_id":null,"version":1}
+    ]
+  }
+}

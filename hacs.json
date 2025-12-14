@@ -1,6 +1,6 @@
 {
   "name": "Toon Climate",
   "country": "NL",
-  "render_readme": false,
+  "render_readme": true,
   "domains": ["climate"]
 }

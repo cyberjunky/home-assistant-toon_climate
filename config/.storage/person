@@ -1,0 +1,15 @@
+{
+  "version": 2,
+  "minor_version": 1,
+  "key": "person",
+  "data": {
+    "items": [
+      {
+        "id": "ron_klinkien",
+        "name": "Ron Klinkien",
+        "user_id": "89deecadee644474912de7521e605568",
+        "device_trackers": []
+      }
+    ]
+  }
+}
