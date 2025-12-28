@@ -48,18 +48,50 @@ Alternatively:
 2. Restart Home Assistant
 3. Add via Settings → Devices & Services
 
+## Configuration
+
+### Restarting Home Assistant
+
+**Initial Install:** After installing the integration, you must restart Home Assistant once to load the component:
+
+- **Home Assistant OS / Supervisor:** Settings → System → Restart Home Assistant
+- **Systemd:** `sudo systemctl restart home-assistant@homeassistant`
+- **Docker:** `docker restart <homeassistant-container>`
+
+**Integration Updates:** When the integration code is updated (via HACS or manual update), restart Home Assistant to load the new code:
+
+```bash
+# Home Assistant OS / Supervisor UI: Settings → System → Restart Home Assistant
+
+# Systemd:
+sudo systemctl restart home-assistant@homeassistant
+
+# Docker:
+docker restart <homeassistant-container>
+```
+
+### Reloading Options (Without Restart)
+
+After the initial restart, you can modify configuration options (temperature limits: min/max) and reload the integration **without restarting** Home Assistant:
+
+1. Go to Settings → Devices & Services
+2. Find "Toon Climate" integration
+3. Click the ⋮ menu → **Reload**
+
+This applies configuration changes immediately without a full restart. **Note:** Reloading only applies options changes; code updates from integration upgrades still require a full restart.
+
 
 ## Screenshots
 ## Screenshots
 
 <p align="center">
-  <a href="https://github.com/cyberjunky/home-assistant-toon_climate/raw/master/screenshots/setup.png" title="Screenshot Toon Setup">
+  <a href="https://github.com/cyberjunky/home-assistant-toon_climate/raw/master/screenshots/setup.png" target="_blank" title="Screenshot Toon Setup">
     <img src="https://github.com/cyberjunky/home-assistant-toon_climate/raw/master/screenshots/setup.png" alt="Setup" width="220" style="margin-right:8px;" />
   </a>
-  <a href="https://github.com/cyberjunky/home-assistant-toon_climate/raw/master/screenshots/comfort.png" title="Screenshot Toon Thermostat">
+  <a href="https://github.com/cyberjunky/home-assistant-toon_climate/raw/master/screenshots/comfort.png" target="_blank" title="Screenshot Toon Thermostat">
     <img src="https://github.com/cyberjunky/home-assistant-toon_climate/raw/master/screenshots/comfort.png" alt="Comfort" width="220" style="margin-right:8px;" />
   </a>
-  <a href="https://github.com/cyberjunky/home-assistant-toon_climate/raw/master/screenshots/history.png" title="Screenshot Toon History">
+  <a href="https://github.com/cyberjunky/home-assistant-toon_climate/raw/master/screenshots/history.png" target="_blank" title="Screenshot Toon History">
     <img src="https://github.com/cyberjunky/home-assistant-toon_climate/raw/master/screenshots/history.png" alt="History" width="220" />
   </a>
 </p>
