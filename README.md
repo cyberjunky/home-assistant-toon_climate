@@ -8,107 +8,60 @@
 
 # Toon Climate Component
 
-This is a Custom Component for Home-Assistant (https://home-assistant.io) that provides a climate device for rooted Toon thermostats.
+A Home Assistant custom component for controlling rooted Toon thermostats. Monitor and control HVAC mode, temperature setpoint, and preset modes.
 
-You can read and control thermostat mode and presets, read current temperature and control the setpoint.
+## Supported Features
 
-Based on the standard behavior of the Toon the following two work modes are supported:
+**HVAC Modes:**
+- **Heat**: Manual mode - heat to target temperature (schedule off)
+- **Auto**: Automatic mode - follow Toon's schedule (schedule on)
 
-- Heat: Heat to a target temperature (schedule off)
-- Auto: Follow the configured schedule as configured in your Toon (schedule on)
+**Presets:**
+- **Away**: Away mode setpoint
+- **Home**: Home mode setpoint
+- **Comfort**: Comfort mode setpoint
+- **Sleep**: Sleep mode setpoint
+- **Eco**: Vacation mode (requires manual activation on device first; uses 6°C minimum by default)
 
-The following five presets are supported
+## Requirements
 
-- Away: This will change the setpoint to what you have configured in your Toon for the away state
-- Home: This will change the setpoint to what you have configured in your Toon for the home state
-- Comfort: This will change the setpoint to what you have configured in your Toon for the comfort state
-- Sleep: This will change the setpoint to what you have configured in your Toon for the sleep state
-
-(\*) The above four presets can be used independent of the selected work mode. - When the Toon is set to "heat" mode the preset will change the setpoint to the setpoint
-configured for the respective preset. It will keep that setpoint until you change it manually
-or switch to "auto" mode - When the Toon is set to "auto" mode the preset will change the setpoint to the setpoint configured
-for the respective preset. However it will only change the setpoint temporatily until the schedule
-changes to the next programmed preset.
-
-- Eco: This will be used for the vacation mode the Toon offers. Regardless of the active work mode
-  the preset will change the setpoint to the setpoint configured for the "vacation" setting. It
-  will stay in this mode untill you change to one of the other four presets or chnage the work
-  mode. So as long as the Toon is in eco (vacation) mode it will ensure the temperature does not
-  drop below the set setpoint.
-
-(\*) Please note that to use the "eco" (vacation) setpoint you will need to activate the vacation mode at
-least once on your Toon. If not the setpoint will use the lowest temperature (6 degrees celcius)
-
-NOTE: This component only works with rooted Toon devices.
-Toon thermostats are available in The Netherlands and Belgium.
-
-More information about rooting your Toon can be found here:
-[Eneco Toon as Domotica controller](http://www.domoticaforum.eu/viewforum.php?f=87)
+- Rooted Toon thermostat
+- Available in The Netherlands and Belgium
+- More info: [Eneco Toon Domotica Forum](http://www.domoticaforum.eu/viewforum.php?f=87)
 
 ## Installation
 
-### HACS - Recommended
+### HACS (Recommended)
 
-- Have [HACS](https://hacs.xyz) installed, this will allow you to easily manage and track updates.
-- Search for 'Toon Climate'.
-- Click Install below the found integration.
-- Configure using the configuration instructions below.
-- Restart Home-Assistant.
+[![Open your Home Assistant instance and open a repository inside the Home Assistant Community Store.](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=cyberjunky&repository=home-assistant-toon_climate&category=integration)
 
-### Manual
+Alternatively:
+1. Install [HACS](https://hacs.xyz) if not already installed
+2. Search for "Toon Climate" in HACS
+3. Click **Install**
+4. Restart Home Assistant
+5. Add via Settings → Devices & Services
 
-- Copy directory `custom_components/toon_climate` to your `<config dir>/custom_components` directory.
-- Configure with config below.
-- Restart Home-Assistant.
+### Manual Installation
 
-## Usage
+1. Copy `custom_components/toon_climate` to your `<config>/custom_components/` directory
+2. Restart Home Assistant
+3. Add via Settings → Devices & Services
 
-To use this component in your installation, add the following to your `configuration.yaml` file:
 
-```yaml
-# Example configuration.yaml entry
+## Screenshots
 
-climate:
-  - platform: toon_climate
-    name: Toon Thermostat
-    host: IP_ADDRESS
-    port: 80
-    scan_interval: 10
-    min_temp: 6.0
-    max_temp: 30.0
-```
+![alt text](https://github.com/cyberjunky/home-assistant-toon_climate/blob/master/screenshots/setup.png?raw=true "Screenshot Toon Setup")
 
-Configuration variables:
+![alt text](https://github.com/cyberjunky/home-assistant-toon_climate/blob/master/screenshots/comfort.png?raw=true "Screenshot Toon Thermostat")
 
-- **name** (_Optional_): Name of the device. (default = 'Toon Thermostat')
-- **host** (_Required_): The IP address on which the Toon can be reached.
-- **port** (_Optional_): Port used by your Toon. (default = 80, other used port numbers can be 10080 or 7080)
-- **scan_interval** (_Optional_): Number of seconds between polls. (default = 60)
-- **min_temp** (_Optional_): Minimal temperature you can set (default = 6.0)
-- **max_temp** (_Optional_): Maximal temperature you can set (default = 30.0)
+![alt text](https://github.com/cyberjunky/home-assistant-toon_climate/blob/master/screenshots/history.png?raw=true "Screenshot Toon History")
 
-## Screenshot
+## Automation Examples
 
-![alt text](https://github.com/cyberjunky/home-assistant-toon_climate/blob/master/screenshots/toon.png?raw=true "Screenshot Toon")
+Replace `climate.toon` with your entity ID.
 
-Toon with simple-thermostat in Lovelace
-
-![alt text](https://github.com/cyberjunky/home-assistant-toon_climate/blob/master/screenshots/toon-simple.png?raw=true "Toon simple-thermostat Screenshot")
-
-Install Javascript from: https://github.com/nervetattoo/simple-thermostat
-
-Using this card (replace 'climate.toon' with your device name if different):
-
-```
-   - type: 'custom:simple-thermostat'
-     entity: climate.toon
-     control:
-       - preset
-```
-
-For the following examples please replace 'climate.toon' with your own climate device name if different.
-
-If you want to automate changing the working mode of your Toon you can use the folowing scripts:
+**Switch HVAC modes:**
 
 ```yaml
 script:
@@ -130,7 +83,7 @@ script:
       mode: single
 ```
 
-If you want to automate changing the standard presets of your Toon you can use the folowing scripts:
+**Change presets:**
 
 ```yaml
 script:
@@ -168,12 +121,12 @@ script:
       mode: single
 ```
 
-And in case you want to use the additional "vacation" feature you can use the following script:
+**Activate vacation mode:**
 
 ```yaml
 script:
   - toon_activate_preset_eco:
-      alias: Toon activate preset Eco
+      alias: Toon activate preset Eco (Vacation)
       sequence:
         - service: climate.set_preset_mode
           data:
@@ -182,43 +135,41 @@ script:
       mode: single
 ```
 
-As a result the Toon Climate Component will put the Toon in "vacation" mode. In this mode none of the standard presets in
-the Toon are activated. Instead it will use the setpoint that was set the last time the vacation mode on the Toon device
-itself was actiated. It will ensure the room will not drop below that specific setpoint. This vacation mode will be cancelled
-as soon as any of the presets on the Toon device are selected or by means of the Toon Climate Component being triggered
-through either the climate card in Home Assistant or any related home assistant scripts or automation requests.
+When activated, the Eco preset enables vacation mode and maintains the last set vacation temperature as the minimum. Exit by selecting any other preset.
 
-If you want a sensor that provides you with the current working mode of the Toon (manual, auto or vacation) add the following:
+## Template Sensors
+
+**Current operation mode:**
 
 ```yaml
-sensor:
-- platform: template
-  sensors:
-    toon_operation_mode:
-      friendly_name: 'Programma'
-        value_template: >-
-        {% if is_state('climate.toon','off') %}
-          Vakantie
-        {% elif is_state('climate.toon','heat') %}
-          Handmatig
-        {% elif is_state('climate.toon','auto') %}
-          Automatisch
-        {% endif %}
+template:
+  - sensor:
+      - name: "Toon Operation Mode"
+        unique_id: toon_operation_mode
+        state: >-
+          {% if is_state('climate.toon','off') %}
+            Vakantie
+          {% elif is_state('climate.toon','heat') %}
+            Handmatig
+          {% elif is_state('climate.toon','auto') %}
+            Automatisch
+          {% endif %}
 ```
 
-If you want a sensor that allows you to show the current room temperature (e.g. in a badge) add the following:
+**Current room temperature:**
 
 ```yaml
 template:
   - sensor:
       - name: "Temperatuur Woonkamer"
-        state: "{{ state_attr('climate.toon','current_temperature') }}"
+        unique_id: toon_current_temperature
+        state: "{{ state_attr('climate.toon', 'current_temperature') }}"
         unit_of_measurement: °C
         device_class: temperature
         state_class: measurement
 ```
 
-If you have a Toon2 and want to gather the environment sensor data you can create REST sensors like this:
+**Toon2 environment sensors:**
 
 ```yaml
 sensor:
@@ -236,17 +187,23 @@ sensor:
 template:
   - sensor:
       - name: "Toon2 Humidity"
-        state: '{{ states.sensor.toon2_airsensors.attributes["humidity"] }}'
+        unique_id: toon2_humidity
+        state: '{{ state_attr("sensor.toon2_airsensors", "humidity") }}'
         device_class: humidity
         state_class: measurement
+        unit_of_measurement: "%"
       - name: "Toon2 TVOC"
-        state: '{{ states.sensor.toon2_airsensors.attributes["tvoc"] }}'
+        unique_id: toon2_tvoc
+        state: '{{ state_attr("sensor.toon2_airsensors", "tvoc") }}'
         device_class: volatile_organic_compounds
         state_class: measurement
+        unit_of_measurement: "ppb"
       - name: "Toon2 eCO2"
-        state: '{{ states.sensor.toon2_airsensors.attributes["eco2"] }}'
+        unique_id: toon2_eco2
+        state: '{{ state_attr("sensor.toon2_airsensors", "eco2") }}'
         device_class: carbon_dioxide
         state_class: measurement
+        unit_of_measurement: "ppm"
 ```
 
 You can create a sensor with more heating information like so:
@@ -255,17 +212,18 @@ You can create a sensor with more heating information like so:
 template:
   - sensor:
       - name: "Toon Driewegklep"
+        unique_id: toon_burner_valve
         state: >-
-          {% if is_state_attr('climate.toon','burner_info', 0) %}
-             Neutraal
-          {% elif is_state_attr('climate.toon','burner_info', 1) %}
-             CV
-          {% elif is_state_attr('climate.toon','burner_info', 2) %}
-             Warm Water
+          {% if is_state_attr('climate.toon', 'burner_info', 0) %}
+            Neutraal
+          {% elif is_state_attr('climate.toon', 'burner_info', 1) %}
+            CV
+          {% elif is_state_attr('climate.toon', 'burner_info', 2) %}
+            Warm Water
           {% endif %}
 ```
 
-Trigger on burner state change (example from CV to Neutral):
+**Detect burner state changes:**
 
 ```yaml
 automation:
@@ -286,11 +244,6 @@ automation:
         title: "Thermostat Info"
 ```
 
-You can also control the Toon device with Google's assistant.
-
-![alt text](https://github.com/cyberjunky/home-assistant-toon_climate/blob/master/screenshots/toon-setpoint.png?raw=true "Toon Assistant Setpoint")
-![alt text](https://github.com/cyberjunky/home-assistant-toon_climate/blob/master/screenshots/toon-eco-preset.png?raw=true "Toon Assistant ECO Preset")
-
 ## Debugging
 
 Add the relevant lines below to the `configuration.yaml`:
@@ -301,6 +254,21 @@ logger:
   logs:
     custom_components.toon_climate: debug
 ```
+
+## Developer
+
+Quick-start (from project root):
+
+```bash
+python3 -m venv .venv
+source .venv/bin/activate
+python -m pip install --upgrade pip
+pip install -r requirements_lint.txt
+./scripts/lint    # runs pre-commit + vulture
+# or: ruff check .
+# to auto-fix: ruff check . --fix
+```
+
 
 ## 💖 Support This Project
 

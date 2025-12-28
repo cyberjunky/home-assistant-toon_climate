@@ -1,88 +1,44 @@
 # Security Policy
 
-## Supported Versions
-
-We release patches for security vulnerabilities for the following versions:
-
-| Version | Supported          |
-| ------- | ------------------ |
-| Latest  | :white_check_mark: |
-| < Latest| :x:                |
-
-We recommend always using the latest version of the integration.
-
 ## Reporting a Vulnerability
 
-We take the security of the Shell Recharge integration seriously. If you believe you have found a security vulnerability, please report it to us as described below.
+If you discover a security vulnerability in this integration, please report it privately by creating a [security advisory](https://github.com/cyberjunky/home-assistant-toon_climate/security/advisories) on GitHub.
 
-### Please do NOT:
-
-- Open a public GitHub issue for security vulnerabilities
-- Disclose the vulnerability publicly before it has been addressed
-
-### Please DO:
-
-1. **Report privately via GitHub Security Advisories:**
-   - Go to the [Security tab](https://github.com/cyberjunky/home-assistant-shell_recharge_ev/security/advisories) of this repository
-   - Click "Report a vulnerability"
-   - Provide a detailed description of the vulnerability
-
-2. **Or email directly:**
-   - Contact the repository owner through their GitHub profile
-
-### What to include in your report:
-
-- Type of vulnerability
-- Full paths of source file(s) related to the vulnerability
-- Location of the affected source code (tag/branch/commit or direct URL)
-- Any special configuration required to reproduce the issue
-- Step-by-step instructions to reproduce the issue
-- Proof-of-concept or exploit code (if possible)
-- Impact of the issue, including how an attacker might exploit it
-
-### What to expect:
-
-- **Acknowledgment:** We'll acknowledge receipt of your vulnerability report within 48 hours
-- **Updates:** We'll provide regular updates on the progress of addressing the vulnerability
-- **Timeline:** We aim to address critical vulnerabilities within 30 days
-- **Credit:** With your permission, we'll credit you in the security advisory when the fix is published
+**Please do NOT open a public issue for security vulnerabilities.** This allows us to address the issue before it becomes public knowledge.
 
 ## Security Considerations
 
-### Credentials Storage
+### Network Communication
 
-This integration stores Shell Recharge account credentials in Home Assistant's secure credential storage. Please ensure:
+This integration communicates with rooted Toon thermostats over your local network (HTTP):
 
-- Your Home Assistant instance is properly secured
-- You use strong, unique passwords for your Shell Recharge account
-- You keep your Home Assistant installation up to date
+- Ensure your Toon device is only accessible from trusted networks
+- Keep your Home Assistant instance on a secure network
+- Consider using firewall rules to restrict access to your Toon device
 
-### API Access
+### Credential Storage
 
-The integration communicates with Shell Recharge APIs. Please be aware:
+Toon device connection details (IP, port) are stored in Home Assistant's configuration:
 
-- API credentials are transmitted over HTTPS
-- No credentials are logged or stored in plain text
-- Session tokens are managed securely
+- Keep your `configuration.yaml` and Home Assistant configuration secure
+- Do not share your Home Assistant backups without sanitizing sensitive data
+- Rooted Toon devices may have default or weak passwords—change them if applicable
 
 ### Best Practices
 
-When using this integration:
+1. **Keep Home Assistant updated** - Security patches are released regularly
+2. **Install from official sources** - Use HACS or official GitHub releases
+3. **Review the code** - As an open-source project, you can audit the code before use
+4. **Secure your network** - Restrict access to your Home Assistant instance
+5. **Use strong authentication** - Enable Home Assistant's user authentication
 
-1. Only install it from official sources (HACS or GitHub releases)
-2. Review the code before installation if you have security concerns
-3. Keep the integration updated to receive security patches
-4. Monitor your Shell Recharge account for any suspicious activity
-5. Use Home Assistant's authentication and access control features
+## Disclosure Timeline
 
-## Disclosure Policy
+When a vulnerability is confirmed:
 
-When we receive a security bug report, we will:
+1. We will assess the severity and impact
+2. A fix will be prepared for the latest version
+3. A new release will be published
+4. A security advisory will be published on GitHub (with credit to the reporter if desired)
 
-1. Confirm the problem and determine affected versions
-2. Audit code to find similar problems
-3. Prepare fixes for all supported versions
-4. Release new versions as soon as possible
-5. Publish a security advisory on GitHub
-
-Thank you for helping keep this integration and its users safe!
+Thank you for helping keep this project secure!

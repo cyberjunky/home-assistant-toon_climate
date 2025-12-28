@@ -1,9 +1,23 @@
-"""Constants for the Toon Thermostat."""
+"""Constants for the Toon Climate integration."""
 
-DOMAIN = "climate"
+DOMAIN = "toon_climate"
 
-ACTIVE_STATE_AWAY = 3
+# Configuration keys
+CONF_MIN_TEMP = "min_temp"
+CONF_MAX_TEMP = "max_temp"
+
+# Default values
+DEFAULT_NAME = "Toon Thermostat"
+DEFAULT_PORT = 80
+DEFAULT_MIN_TEMP = 6.0
+DEFAULT_MAX_TEMP = 30.0
+
+# Active states
 ACTIVE_STATE_COMFORT = 0
-ACTIVE_STATE_HOLIDAY = 4
 ACTIVE_STATE_HOME = 1
 ACTIVE_STATE_SLEEP = 2
+ACTIVE_STATE_AWAY = 3
+ACTIVE_STATE_HOLIDAY = 4
+
+# Platforms
+PLATFORMS = ["climate"]

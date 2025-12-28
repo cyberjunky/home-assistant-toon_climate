@@ -1,0 +1,26 @@
+ # Ruff configuration (top-level keys expected in ruff.toml)
+fix = true
+"line-length" = 100
+"target-version" = "py313"
+
+[lint]
+select = [
+    "ASYNC",
+    "B",
+    "C4",
+    "C90",
+    "E",
+    "F",
+    "I",
+    "ISC",
+    "RUF",
+    "UP",
+    "W",
+]
+ignore = [
+    "E501",   # Line too long (handled by formatter)
+    "UP040",  # Unnecessary class parentheses
+]
+
+[lint.mccabe]
+max-complexity = 25

@@ -1,8 +1,0 @@
-[
-  {
-    "key": "ctrl+shift+r",
-    "command": "devcontainers.rebuildContainer",
-    "when": "devContainerAttached"
-  }
-]
-

@@ -19,7 +19,7 @@ if [ ! -f "${PWD}/config/configuration.yaml" ]; then
 logger:
   default: info
   logs:
-    custom_components.toon_climate.yaml"
+    custom_components.toon_climate: debug"
 fi
 
 # Set the python path to include our custom_components directory
