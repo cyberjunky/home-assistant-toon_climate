@@ -6,9 +6,9 @@
 [![Donate via PayPal](https://img.shields.io/badge/Donate-PayPal-blue.svg?style=for-the-badge&logo=paypal)](https://www.paypal.me/cyberjunkynl/)
 [![Sponsor on GitHub](https://img.shields.io/badge/Sponsor-GitHub-red.svg?style=for-the-badge&logo=github)](https://github.com/sponsors/cyberjunky)
 
-# Toon Climate Component
+# Toon Climate Custom Integration
 
-A Home Assistant custom component for controlling rooted Toon thermostats. Monitor and control HVAC mode, temperature setpoint, and preset modes.
+A Home Assistant custom integration for controlling rooted Toon thermostats. Monitor and control HVAC mode, temperature setpoint, and preset modes.
 
 ## Supported Features
 
@@ -50,12 +50,19 @@ Alternatively:
 
 
 ## Screenshots
+## Screenshots
 
-![alt text](https://github.com/cyberjunky/home-assistant-toon_climate/blob/master/screenshots/setup.png?raw=true "Screenshot Toon Setup")
-
-![alt text](https://github.com/cyberjunky/home-assistant-toon_climate/blob/master/screenshots/comfort.png?raw=true "Screenshot Toon Thermostat")
-
-![alt text](https://github.com/cyberjunky/home-assistant-toon_climate/blob/master/screenshots/history.png?raw=true "Screenshot Toon History")
+<p align="center">
+  <a href="https://github.com/cyberjunky/home-assistant-toon_climate/raw/master/screenshots/setup.png" title="Screenshot Toon Setup">
+    <img src="https://github.com/cyberjunky/home-assistant-toon_climate/raw/master/screenshots/setup.png" alt="Setup" width="220" style="margin-right:8px;" />
+  </a>
+  <a href="https://github.com/cyberjunky/home-assistant-toon_climate/raw/master/screenshots/comfort.png" title="Screenshot Toon Thermostat">
+    <img src="https://github.com/cyberjunky/home-assistant-toon_climate/raw/master/screenshots/comfort.png" alt="Comfort" width="220" style="margin-right:8px;" />
+  </a>
+  <a href="https://github.com/cyberjunky/home-assistant-toon_climate/raw/master/screenshots/history.png" title="Screenshot Toon History">
+    <img src="https://github.com/cyberjunky/home-assistant-toon_climate/raw/master/screenshots/history.png" alt="History" width="220" />
+  </a>
+</p>
 
 ## Automation Examples
 
