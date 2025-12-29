@@ -82,7 +82,6 @@ This applies configuration changes immediately without a full restart. **Note:**
 
 
 ## Screenshots
-## Screenshots
 
 <p align="center">
   <a href="https://github.com/cyberjunky/home-assistant-toon_climate/raw/master/screenshots/setup.png" target="_blank" title="Screenshot Toon Setup">
@@ -294,7 +293,7 @@ logger:
     custom_components.toon_climate: debug
 ```
 
-## Developer
+## Development
 
 Quick-start (from project root):
 
