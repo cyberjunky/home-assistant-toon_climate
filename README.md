@@ -113,7 +113,7 @@ Changes apply immediately. To enable/disable individual sensors, click on the se
 
 ## Automation Examples
 
-Replace `climate.toon` with your entity ID.
+Replace `climate.toon_thermostat` with your entity ID.
 
 **Switch HVAC modes:**
 
@@ -125,7 +125,7 @@ script:
         - service: climate.set_hvac_mode
           data:
             hvac_mode: "heat"
-          entity_id: climate.toon
+          entity_id: climate.toon_thermostat
       mode: single
   - toon_enable_schedule_mode:
       alias: Toon enable Schedule mode
@@ -133,7 +133,7 @@ script:
         - service: climate.set_hvac_mode
           data:
             hvac_mode: "auto"
-          entity_id: climate.toon
+          entity_id: climate.toon_thermostat
       mode: single
 ```
 
@@ -147,7 +147,7 @@ script:
         - service: climate.set_preset_mode
           data:
             preset_mode: "comfort"
-          entity_id: climate.toon
+          entity_id: climate.toon_thermostat
       mode: single
   - toon_activate_preset_away:
       alias: Toon activate preset Away
@@ -155,7 +155,7 @@ script:
         - service: climate.set_preset_mode
           data:
             preset_mode: "away"
-          entity_id: climate.toon
+          entity_id: climate.toon_thermostat
       mode: single
   - toon_activate_preset_home:
       alias: Toon activate preset Home
@@ -171,7 +171,7 @@ script:
         - service: climate.set_preset_mode
           data:
             preset_mode: "sleep"
-          entity_id: climate.toon
+          entity_id: climate.toon_thermostat
       mode: single
 ```
 
@@ -185,7 +185,7 @@ script:
         - service: climate.set_preset_mode
           data:
             preset_mode: eco
-          entity_id: climate.toon
+          entity_id: climate.toon_thermostat
       mode: single
 ```
 
@@ -201,11 +201,11 @@ template:
       - name: "Toon Operation Mode"
         unique_id: toon_operation_mode
         state: >-
-          {% if is_state('climate.toon','off') %}
+          {% if is_state('climate.toon_thermostat','off') %}
             Vakantie
-          {% elif is_state('climate.toon','heat') %}
+          {% elif is_state('climate.toon_thermostat','heat') %}
             Handmatig
-          {% elif is_state('climate.toon','auto') %}
+          {% elif is_state('climate.toon_thermostat','auto') %}
             Automatisch
           {% endif %}
 ```
@@ -217,7 +217,7 @@ template:
   - sensor:
       - name: "Temperatuur Woonkamer"
         unique_id: toon_current_temperature
-        state: "{{ state_attr('climate.toon', 'current_temperature') }}"
+        state: "{{ state_attr('climate.toon_thermostat', 'current_temperature') }}"
         unit_of_measurement: °C
         device_class: temperature
         state_class: measurement
@@ -268,11 +268,11 @@ template:
       - name: "Toon Driewegklep"
         unique_id: toon_burner_valve
         state: >-
-          {% if is_state_attr('climate.toon', 'burner_info', 0) %}
+          {% if is_state_attr('climate.toon_thermostat', 'burner_info', 0) %}
             Neutraal
-          {% elif is_state_attr('climate.toon', 'burner_info', 1) %}
+          {% elif is_state_attr('climate.toon_thermostat', 'burner_info', 1) %}
             CV
-          {% elif is_state_attr('climate.toon', 'burner_info', 2) %}
+          {% elif is_state_attr('climate.toon_thermostat', 'burner_info', 2) %}
             Warm Water
           {% endif %}
 ```
