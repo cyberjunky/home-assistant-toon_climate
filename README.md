@@ -63,16 +63,39 @@ Alternatively:
    - **Maximum Temperature**: The maximum temperature which can be set
    - **Update Interval**: Seconds between updates (default: `30`)
 
-### Reloading Options (Without Restart)
+### Migrating from YAML
 
-After the initial restart, you can modify configuration options (temperature limits: min/max) and reload the integration **without restarting** Home Assistant:
+> **Note:** YAML configuration is deprecated as of v2.0.0
 
-1. Go to Settings → Devices & Services
-2. Find "Toon Climate" integration
-3. Click the ⋮ menu → **Reload**
+If you previously configured this integration in `configuration.yaml`, your settings will be **automatically imported** on your first restart after updating.
 
-This applies configuration changes immediately without a full restart. **Note:** Reloading only applies options changes; integration upgrades still require a full restart.
+**Your old YAML config** (will be migrated):
 
+```yaml
+climate:
+  - platform: toon_climate
+    name: Toon
+    scan_interval: 90
+    host: !secret toon_host
+```
+
+**After migration:**
+
+1. Remove the YAML configuration from `configuration.yaml`
+2. Manage all settings via **Settings** → **Devices & Services** → **Toon Climate** → **Configure**
+3. Disable unwanted sensors through entity settings
+
+### Modifying Settings
+
+Change integration settings without restarting Home Assistant:
+
+1. Go to **Settings** → **Devices & Services**
+2. Find **Toon Climate**
+3. Click **Configure** icon
+4. Modify setting(s)
+5. Click **Submit**
+
+Changes apply immediately. To enable/disable individual sensors, click on the sensor entity and toggle "Enable entity".
 
 ## Screenshots
 
@@ -325,6 +348,12 @@ If you find this library useful for your projects, please consider supporting it
 - Shows appreciation for hundreds of hours of development
 
 Every contribution, no matter the size, makes a difference and is greatly appreciated! 🙏
+
+## License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+---
 
 [releases-shield]: https://img.shields.io/github/release/cyberjunky/home-assistant-toon_climate.svg?style=for-the-badge
 [releases]: https://github.com/cyberjunky/home-assistant-toon_climate/releases
