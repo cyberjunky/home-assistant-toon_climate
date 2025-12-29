@@ -38,7 +38,7 @@ A Home Assistant custom integration for controlling rooted Toon thermostats. Mon
 Alternatively:
 1. Install [HACS](https://hacs.xyz) if not already installed
 2. Search for "Toon Climate" in HACS
-3. Click **Install**
+3. Click **Download**
 4. Restart Home Assistant
 5. Add via Settings → Devices & Services
 
@@ -50,25 +50,18 @@ Alternatively:
 
 ## Configuration
 
-### Restarting Home Assistant
+### Adding the Integration
 
-**Initial Install:** After installing the integration, you must restart Home Assistant once to load the component:
-
-- **Home Assistant OS / Supervisor:** Settings → System → Restart Home Assistant
-- **Systemd:** `sudo systemctl restart home-assistant@homeassistant`
-- **Docker:** `docker restart <homeassistant-container>`
-
-**Integration Updates:** When the integration code is updated (via HACS or manual update), restart Home Assistant to load the new code:
-
-```bash
-# Home Assistant OS / Supervisor UI: Settings → System → Restart Home Assistant
-
-# Systemd:
-sudo systemctl restart home-assistant@homeassistant
-
-# Docker:
-docker restart <homeassistant-container>
-```
+1. Navigate to **Settings** → **Devices & Services**
+2. Click **+ Add Integration**
+3. Search for **"Toon Climate"**
+4. Enter your configuration:
+   - **Host**: Your Toon's IP address
+   - **Port**: Default is `80`
+   - **Name**: Friendly name (default: "Toon Thermostat")
+   - **Minimum Temperature**: The minimum temperature which can be set
+   - **Maximum Temperature**: The maximum temperature which can be set
+   - **Update Interval**: Seconds between updates (default: `30`)
 
 ### Reloading Options (Without Restart)
 
@@ -78,7 +71,7 @@ After the initial restart, you can modify configuration options (temperature lim
 2. Find "Toon Climate" integration
 3. Click the ⋮ menu → **Reload**
 
-This applies configuration changes immediately without a full restart. **Note:** Reloading only applies options changes; code updates from integration upgrades still require a full restart.
+This applies configuration changes immediately without a full restart. **Note:** Reloading only applies options changes; integration upgrades still require a full restart.
 
 
 ## Screenshots
