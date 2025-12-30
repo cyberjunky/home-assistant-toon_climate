@@ -23,11 +23,26 @@ A Home Assistant custom integration for controlling rooted Toon thermostats. Mon
 - **Sleep**: Sleep mode setpoint
 - **Eco**: Vacation mode (requires manual activation on device first; uses 6°C minimum by default)
 
+## Screenshots
+
+<p align="center">
+  <a href="https://github.com/cyberjunky/home-assistant-toon_climate/raw/master/screenshots/setup.png" target="_blank" title="Screenshot Toon Setup">
+    <img src="https://github.com/cyberjunky/home-assistant-toon_climate/raw/master/screenshots/setup.png" alt="Setup" width="220" style="margin-right:8px;" />
+  </a>
+  <a href="https://github.com/cyberjunky/home-assistant-toon_climate/raw/master/screenshots/comfort.png" target="_blank" title="Screenshot Toon Thermostat">
+    <img src="https://github.com/cyberjunky/home-assistant-toon_climate/raw/master/screenshots/comfort.png" alt="Comfort" width="220" style="margin-right:8px;" />
+  </a>
+  <a href="https://github.com/cyberjunky/home-assistant-toon_climate/raw/master/screenshots/history.png" target="_blank" title="Screenshot Toon History">
+    <img src="https://github.com/cyberjunky/home-assistant-toon_climate/raw/master/screenshots/history.png" alt="History" width="220" />
+  </a>
+</p>
+
 ## Requirements
 
 - Rooted Toon thermostat
 - Available in The Netherlands and Belgium
-- More info: [Eneco Toon Domotica Forum](http://www.domoticaforum.eu/viewforum.php?f=87)
+
+For rooting instructions, visit the [Eneco Toon Domotica Forum](http://www.domoticaforum.eu/viewforum.php?f=87).
 
 ## Installation
 
@@ -36,6 +51,7 @@ A Home Assistant custom integration for controlling rooted Toon thermostats. Mon
 [![Open your Home Assistant instance and open a repository inside the Home Assistant Community Store.](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=cyberjunky&repository=home-assistant-toon_climate&category=integration)
 
 Alternatively:
+
 1. Install [HACS](https://hacs.xyz) if not already installed
 2. Search for "Toon Climate" in HACS
 3. Click **Download**
@@ -58,10 +74,10 @@ Alternatively:
 4. Enter your configuration:
    - **Host**: Your Toon's IP address
    - **Port**: Default is `80`
-   - **Name**: Friendly name (default: "Toon Thermostat")
+   - **Name**: Friendly name prefix (default: "Toon")
    - **Minimum Temperature**: The minimum temperature which can be set
    - **Maximum Temperature**: The maximum temperature which can be set
-   - **Update Interval**: Seconds between updates (default: `30`)
+   - **Update Interval**: Seconds between updates (default: `10`)
 
 ### Migrating from YAML
 
@@ -92,24 +108,12 @@ Change integration settings without restarting Home Assistant:
 1. Go to **Settings** → **Devices & Services**
 2. Find **Toon Climate**
 3. Click **Configure** icon
-4. Modify setting(s)
+4. Modify name, min/max temperatures or scan interval
 5. Click **Submit**
 
-Changes apply immediately. To enable/disable individual sensors, click on the sensor entity and toggle "Enable entity".
+Changes apply immediately.
 
-## Screenshots
-
-<p align="center">
-  <a href="https://github.com/cyberjunky/home-assistant-toon_climate/raw/master/screenshots/setup.png" target="_blank" title="Screenshot Toon Setup">
-    <img src="https://github.com/cyberjunky/home-assistant-toon_climate/raw/master/screenshots/setup.png" alt="Setup" width="220" style="margin-right:8px;" />
-  </a>
-  <a href="https://github.com/cyberjunky/home-assistant-toon_climate/raw/master/screenshots/comfort.png" target="_blank" title="Screenshot Toon Thermostat">
-    <img src="https://github.com/cyberjunky/home-assistant-toon_climate/raw/master/screenshots/comfort.png" alt="Comfort" width="220" style="margin-right:8px;" />
-  </a>
-  <a href="https://github.com/cyberjunky/home-assistant-toon_climate/raw/master/screenshots/history.png" target="_blank" title="Screenshot Toon History">
-    <img src="https://github.com/cyberjunky/home-assistant-toon_climate/raw/master/screenshots/history.png" alt="History" width="220" />
-  </a>
-</p>
+## Advanced Usage
 
 ## Automation Examples
 
@@ -163,7 +167,7 @@ script:
         - service: climate.set_preset_mode
           data:
             preset_mode: "home"
-          entity_id: climate.toon
+          entity_id: climate.toon_thermostat
       mode: single
   - toon_activate_preset_sleep:
       alias: Toon activate preset Sleep
@@ -176,6 +180,7 @@ script:
 ```
 
 **Activate vacation mode:**
+
 
 ```yaml
 script:
@@ -217,7 +222,7 @@ template:
   - sensor:
       - name: "Temperatuur Woonkamer"
         unique_id: toon_current_temperature
-        state: "{{ state_attr('climate.toon_thermostat', 'current_temperature') }}"
+        state: "{{ state_attr('climate.toon', 'current_temperature') }}"
         unit_of_measurement: °C
         device_class: temperature
         state_class: measurement
@@ -268,11 +273,11 @@ template:
       - name: "Toon Driewegklep"
         unique_id: toon_burner_valve
         state: >-
-          {% if is_state_attr('climate.toon_thermostat', 'burner_info', 0) %}
+          {% if is_state_attr('climate.toon', 'burner_info', 0) %}
             Neutraal
-          {% elif is_state_attr('climate.toon_thermostat', 'burner_info', 1) %}
+          {% elif is_state_attr('climate.toon', 'burner_info', 1) %}
             CV
-          {% elif is_state_attr('climate.toon_thermostat', 'burner_info', 2) %}
+          {% elif is_state_attr('climate.toon', 'burner_info', 2) %}
             Warm Water
           {% endif %}
 ```
@@ -298,7 +303,9 @@ automation:
         title: "Thermostat Info"
 ```
 
-## Debugging
+## Troubleshooting
+
+### Enable Debug Logging
 
 Add the relevant lines below to the `configuration.yaml`:
 
@@ -308,6 +315,25 @@ logger:
   logs:
     custom_components.toon_climate: debug
 ```
+
+Alternatively, enable debug logging via the UI in **Settings** → **Devices & Services** → **Toon Boiler Status** → **Enable debug logging**:
+
+![Enable Debug Logging](screenshots/enabledebug.png)
+
+Then perform any steps to reproduce the issue and disable debug logging again. It will download the relevant log file automatically.
+
+### Common Issues
+
+**Integration won't connect:**
+
+- Verify your Toon's IP address is correct
+- Check that port 80 is accessible (try visiting `http://YOUR_TOON_IP/boilerstatus/boilervalues.txt` in a browser)
+
+**Old YAML config not migrating:**
+
+- Check Home Assistant logs for import errors
+- Verify the YAML syntax is correct
+- Manually add via UI if automatic import fails
 
 ## Development
 
@@ -322,7 +348,6 @@ pip install -r requirements_lint.txt
 # or: ruff check .
 # to auto-fix: ruff check . --fix
 ```
-
 
 ## 💖 Support This Project
 
@@ -348,12 +373,6 @@ If you find this library useful for your projects, please consider supporting it
 - Shows appreciation for hundreds of hours of development
 
 Every contribution, no matter the size, makes a difference and is greatly appreciated! 🙏
-
-## License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
----
 
 [releases-shield]: https://img.shields.io/github/release/cyberjunky/home-assistant-toon_climate.svg?style=for-the-badge
 [releases]: https://github.com/cyberjunky/home-assistant-toon_climate/releases
