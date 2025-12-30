@@ -136,6 +136,7 @@ class ThermostatDevice(ClimateEntity):
         self._active_state: int | None = None
         self._burner_info: int | None = None
         self._modulation_level: int | None = None
+        self._current_internal_boiler_setpoint: int | None = None
         self._current_setpoint: float | None = None
         self._current_temperature: float | None = None
         self._ot_comm_error: int | None = None
@@ -195,6 +196,7 @@ class ThermostatDevice(ClimateEntity):
             self._active_state = int(self._data["activeState"])
             self._burner_info = int(self._data["burnerInfo"])
             self._modulation_level = int(self._data["currentModulationLevel"])
+            self._current_internal_boiler_setpoint = int(self._data["currentInternalBoilerSetpoint"])
             self._current_setpoint = int(self._data["currentSetpoint"]) / 100
             self._current_temperature = int(self._data["currentTemp"]) / 100
             self._ot_comm_error = int(self._data["otCommError"])
@@ -375,6 +377,7 @@ class ThermostatDevice(ClimateEntity):
         return {
             "burner_info": self._burner_info,
             "modulation_level": self._modulation_level,
+            "current_internal_boiler_setpoint": self._current_internal_boiler_setpoint,
             "ot_comm_error": self._ot_comm_error,
             "program_state": self._program_state,
         }
