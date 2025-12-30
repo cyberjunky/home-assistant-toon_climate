@@ -21,10 +21,12 @@ from homeassistant.helpers.aiohttp_client import async_get_clientsession
 from .const import (
     CONF_MAX_TEMP,
     CONF_MIN_TEMP,
+    CONF_SCAN_INTERVAL,
     DEFAULT_MAX_TEMP,
     DEFAULT_MIN_TEMP,
     DEFAULT_NAME,
     DEFAULT_PORT,
+    DEFAULT_SCAN_INTERVAL,
     DOMAIN,
 )
 
@@ -79,6 +81,7 @@ class ToonClimateConfigFlow(ConfigFlow, domain=DOMAIN):
                     options={
                         CONF_MIN_TEMP: user_input.get(CONF_MIN_TEMP, DEFAULT_MIN_TEMP),
                         CONF_MAX_TEMP: user_input.get(CONF_MAX_TEMP, DEFAULT_MAX_TEMP),
+                        CONF_SCAN_INTERVAL: user_input.get(CONF_SCAN_INTERVAL, DEFAULT_SCAN_INTERVAL),
                     },
                 )
             errors["base"] = "cannot_connect"
@@ -92,6 +95,7 @@ class ToonClimateConfigFlow(ConfigFlow, domain=DOMAIN):
                     vol.Optional(CONF_NAME, default=DEFAULT_NAME): str,
                     vol.Optional(CONF_MIN_TEMP, default=DEFAULT_MIN_TEMP): vol.Coerce(float),
                     vol.Optional(CONF_MAX_TEMP, default=DEFAULT_MAX_TEMP): vol.Coerce(float),
+                    vol.Optional(CONF_SCAN_INTERVAL, default=DEFAULT_SCAN_INTERVAL): vol.Coerce(int),
                 }
             ),
             errors=errors,
@@ -119,6 +123,7 @@ class ToonClimateConfigFlow(ConfigFlow, domain=DOMAIN):
             options={
                 CONF_MIN_TEMP: import_data.get(CONF_MIN_TEMP, DEFAULT_MIN_TEMP),
                 CONF_MAX_TEMP: import_data.get(CONF_MAX_TEMP, DEFAULT_MAX_TEMP),
+                CONF_SCAN_INTERVAL: import_data.get(CONF_SCAN_INTERVAL, DEFAULT_SCAN_INTERVAL),
             },
         )
 
@@ -153,6 +158,7 @@ class ToonClimateOptionsFlowHandler(OptionsFlow):
             new_options = {
                 CONF_MIN_TEMP: user_input.get(CONF_MIN_TEMP, DEFAULT_MIN_TEMP),
                 CONF_MAX_TEMP: user_input.get(CONF_MAX_TEMP, DEFAULT_MAX_TEMP),
+                CONF_SCAN_INTERVAL: user_input.get(CONF_SCAN_INTERVAL, DEFAULT_SCAN_INTERVAL),
             }
 
             # Validate connection if host or port changed
@@ -204,5 +210,11 @@ class ToonClimateOptionsFlowHandler(OptionsFlow):
                     CONF_MAX_TEMP,
                     default=self._config_entry.options.get(CONF_MAX_TEMP, DEFAULT_MAX_TEMP),
                 ): vol.Coerce(float),
+                vol.Optional(
+                    CONF_SCAN_INTERVAL,
+                    default=self._config_entry.options.get(
+                        CONF_SCAN_INTERVAL, DEFAULT_SCAN_INTERVAL
+                    ),
+                ): vol.Coerce(int),
             }
         )

@@ -11,6 +11,7 @@ from __future__ import annotations
 
 import asyncio
 import logging
+from datetime import timedelta
 from typing import Any
 
 import aiohttp
@@ -41,10 +42,12 @@ from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from .const import (
     CONF_MAX_TEMP,
     CONF_MIN_TEMP,
+    CONF_SCAN_INTERVAL,
     DEFAULT_MAX_TEMP,
     DEFAULT_MIN_TEMP,
     DEFAULT_NAME,
     DEFAULT_PORT,
+    DEFAULT_SCAN_INTERVAL,
     DOMAIN,
 )
 
@@ -83,7 +86,12 @@ async def async_setup_entry(
 ) -> None:
     """Set up the Toon Climate platform from a config entry."""
     session = async_get_clientsession(hass)
-    async_add_entities([ThermostatDevice(session, entry)], update_before_add=True)
+    
+    # Get scan interval from options
+    scan_interval = entry.options.get(CONF_SCAN_INTERVAL, DEFAULT_SCAN_INTERVAL)
+    
+    entity = ThermostatDevice(session, entry, scan_interval)
+    async_add_entities([entity], update_before_add=True)
 
 
 class ThermostatDevice(ClimateEntity):
@@ -92,10 +100,11 @@ class ThermostatDevice(ClimateEntity):
     _attr_has_entity_name = True
     _attr_name = None
 
-    def __init__(self, session: aiohttp.ClientSession, entry: ConfigEntry) -> None:
+    def __init__(self, session: aiohttp.ClientSession, entry: ConfigEntry, scan_interval: int) -> None:
         """Initialize the Toon climate device."""
         self._session = session
         self._entry = entry
+        self._attr_scan_interval = timedelta(seconds=scan_interval)
 
         # Get configuration from entry data and options
         self._host = entry.data.get(CONF_HOST)

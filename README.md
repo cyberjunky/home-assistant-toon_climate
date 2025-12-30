@@ -327,7 +327,7 @@ Then perform any steps to reproduce the issue and disable debug logging again. I
 **Integration won't connect:**
 
 - Verify your Toon's IP address is correct
-- Check that port 80 is accessible (try visiting `http://YOUR_TOON_IP/boilerstatus/boilervalues.txt` in a browser)
+- Check that port 80 is accessible (try visiting `http://YOUR_TOON_IP/happ_thermstat?action=getThermostatInfo` in a browser)
 
 **Old YAML config not migrating:**
 
@@ -373,6 +373,12 @@ If you find this library useful for your projects, please consider supporting it
 - Shows appreciation for hundreds of hours of development
 
 Every contribution, no matter the size, makes a difference and is greatly appreciated! 🙏
+
+## License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+---
 
 [releases-shield]: https://img.shields.io/github/release/cyberjunky/home-assistant-toon_climate.svg?style=for-the-badge
 [releases]: https://github.com/cyberjunky/home-assistant-toon_climate/releases

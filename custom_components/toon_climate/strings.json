@@ -9,14 +9,16 @@
                     "port": "Port",
                     "name": "Name",
                     "min_temp": "Minimum Temperature",
-                    "max_temp": "Maximum Temperature"
+                    "max_temp": "Maximum Temperature",
+                    "scan_interval": "Update interval (seconds)"
                 },
                 "data_description": {
                     "host": "IP address of your rooted Toon device",
                     "port": "Port number (default: 80, alternatives: 10080, 7080)",
                     "name": "Display name for the thermostat",
                     "min_temp": "Minimum temperature setpoint (°C)",
-                    "max_temp": "Maximum temperature setpoint (°C)"
+                    "max_temp": "Maximum temperature setpoint (°C)",
+                    "scan_interval": "Update interval in seconds (default: 10)"
                 }
             }
         },
@@ -40,14 +42,16 @@
                     "port": "Port",
                     "name": "Name",
                     "min_temp": "Minimum Temperature",
-                    "max_temp": "Maximum Temperature"
+                    "max_temp": "Maximum Temperature",
+                    "scan_interval": "Update interval (seconds)"
                 },
                 "data_description": {
                     "host": "IP address of your rooted Toon device",
                     "port": "Port number (default: 80, alternatives: 10080, 7080)",
                     "name": "Display name for the thermostat",
                     "min_temp": "Minimum temperature setpoint (°C)",
-                    "max_temp": "Maximum temperature setpoint (°C)"
+                    "max_temp": "Maximum temperature setpoint (°C)",
+                    "scan_interval": "Update interval in seconds (default: 10)"
                 }
             }
         },
