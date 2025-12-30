@@ -1,35 +1,47 @@
 {
-    "tasks": [
-      {
-        "command": "scripts/develop",
-        "label": "Run Home Assistant",
-        "problemMatcher": [],
-        "type": "shell"
-      },
-      {
-        "command": "scripts/setup",
-        "label": "Upgrade environment",
-        "problemMatcher": [],
-        "type": "shell"
-      },
-      {
-        "command": "scripts/test",
-        "label": "Run tests",
-        "problemMatcher": [],
-        "type": "shell"
-      },
-      {
-        "command": "scripts/lint",
-        "label": "Run lint checks",
-        "problemMatcher": [],
-        "type": "shell"
-      },
-      {
-        "label": "Rebuild Container",
-        "type": "shell",
-        "command": "echo 'To rebuild the container, use Command Palette (Ctrl+Shift+P / Cmd+Shift+P) and select: Dev Containers: Rebuild Container'",
-        "problemMatcher": []
-      }
-    ],
-    "version": "2.0.0"
-  }
+  "tasks": [
+    {
+      "command": "scripts/develop",
+      "label": "Run Home Assistant",
+      "problemMatcher": [],
+      "type": "shell",
+      "detail": "Runs Home Assistant"
+    },
+    {
+      "command": "scripts/setup",
+      "label": "Upgrade environment",
+      "problemMatcher": [],
+      "type": "shell",
+      "detail": "Upgrades the environment"
+    },
+    {
+      "command": "scripts/test",
+      "label": "Run tests",
+      "problemMatcher": [],
+      "type": "shell",
+      "detail": "Runs tests"
+    },
+    {
+      "command": "scripts/lint",
+      "label": "Run lint checks",
+      "problemMatcher": [],
+      "type": "shell",
+      "detail": "Runs lint checks"
+    },
+    {
+      "label": "Rebuild Container",
+      "type": "shell",
+      "command": "${command:remote-containers.rebuildContainer}",
+      "problemMatcher": [],
+      "detail": "Rebuilds the dev container"
+    },
+    {
+      "label": "Reopen in Container",
+      "type": "shell",
+      "command": "${command:remote-containers.reopenInContainer}",
+      "problemMatcher": [],
+      "detail": "Reopens the folder in a dev container"
+    }
+  ],
+  "version": "2.0.0"
+}
