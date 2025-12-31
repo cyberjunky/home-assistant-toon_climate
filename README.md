@@ -318,7 +318,7 @@ logger:
     custom_components.toon_climate: debug
 ```
 
-Alternatively, enable debug logging via the UI in **Settings** → **Devices & Services** → **Toon Boiler Status** → **Enable debug logging**:
+Alternatively, enable debug logging via the UI in **Settings** → **Devices & Services** → **Toon Climate** → **Enable debug logging**:
 
 ![Enable Debug Logging](screenshots/enabledebug.png)
 
