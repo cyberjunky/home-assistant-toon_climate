@@ -23,6 +23,18 @@ A Home Assistant custom integration for controlling rooted Toon thermostats. Mon
 - **Sleep**: Sleep mode setpoint
 - **Eco**: Vacation mode (requires manual activation on device first; uses 6°C minimum by default)
 
+**Extra State Attributes:**
+
+The climate entity exposes additional attributes for advanced automations:
+
+| Attribute | Description |
+|-----------|-------------|
+| `burner_info` | Burner state: `0` = off, `1` = heating for setpoint, `2` = heating for hot water, `3` = preheating |
+| `modulation_level` | Current boiler modulation percentage (0-100) |
+| `current_internal_boiler_setpoint` | Internal boiler water temperature setpoint |
+| `ot_comm_error` | OpenTherm communication error flag (`0` = no error) |
+| `program_state` | Schedule state: `0` = manual, `1` = schedule active, `2` = schedule override |
+
 ## Screenshots
 
 ![Configure](screenshots/setup.png) ![Thermostat](screenshots/comfort.png) ![History](screenshots/history.png)
