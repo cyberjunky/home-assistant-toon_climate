@@ -34,10 +34,11 @@ from homeassistant.const import (
     CONF_PORT,
     UnitOfTemperature,
 )
-from homeassistant.core import HomeAssistant
+from homeassistant.core import HomeAssistant, callback
 from homeassistant.helpers.aiohttp_client import async_get_clientsession
 from homeassistant.helpers.device_registry import DeviceInfo
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
+from homeassistant.helpers.event import async_track_time_interval
 
 from .const import (
     CONF_MAX_TEMP,
@@ -99,12 +100,14 @@ class ThermostatDevice(ClimateEntity):
 
     _attr_has_entity_name = True
     _attr_name = None
+    _attr_should_poll = False  # We handle our own polling
 
     def __init__(self, session: aiohttp.ClientSession, entry: ConfigEntry, scan_interval: int) -> None:
         """Initialize the Toon climate device."""
         self._session = session
         self._entry = entry
-        self._attr_scan_interval = timedelta(seconds=scan_interval)
+        self._scan_interval = timedelta(seconds=scan_interval)
+        self._unsub_update: callable | None = None
 
         # Get configuration from entry data and options
         self._host = entry.data.get(CONF_HOST)
@@ -149,37 +152,41 @@ class ThermostatDevice(ClimateEntity):
         _LOGGER.info(
             "%s: Supported hvac modes %s. "
             "Supported preset modes %s. "
-            "Temperature can be set between %s°C and %s°C",
+            "Temperature can be set between %s°C and %s°C. "
+            "Update interval: %s seconds",
             self._device_name,
             SUPPORT_MODES,
             SUPPORT_PRESETS,
             self._min_temp,
             self._max_temp,
+            scan_interval,
         )
 
-    @staticmethod
-    async def do_api_request(
-        name: str, session: aiohttp.ClientSession, url: str
-    ) -> dict[str, Any] | None:
-        """Do an API request."""
-        try:
-            async with asyncio.timeout(5):
-                response = await session.get(url, headers={"Accept-Encoding": "identity"})
-            response = await response.json(content_type="text/javascript")
-            _LOGGER.debug("Data received from %s: %s", name, response)
-        except (aiohttp.ClientError, TimeoutError, TypeError, KeyError) as err:
-            _LOGGER.error("Cannot poll %s using url: %s - %s", name, url, err)
-            return None
+    async def async_added_to_hass(self) -> None:
+        """Run when entity is added to hass."""
+        # Do initial update
+        await self._async_update_data()
+        
+        # Set up periodic updates
+        self._unsub_update = async_track_time_interval(
+            self.hass,
+            self._async_scheduled_update,
+            self._scan_interval,
+        )
 
-        return response
+    async def async_will_remove_from_hass(self) -> None:
+        """Run when entity is being removed from hass."""
+        if self._unsub_update:
+            self._unsub_update()
+            self._unsub_update = None
 
-    @property
-    def should_poll(self) -> bool:
-        """Polling needed for thermostat."""
-        return True
+    @callback
+    def _async_scheduled_update(self, now=None) -> None:
+        """Handle scheduled update."""
+        self.hass.async_create_task(self._async_update_data())
 
-    async def async_update(self) -> None:
-        """Update local data with thermostat data (Toon 1 and Toon 2)."""
+    async def _async_update_data(self) -> None:
+        """Fetch data from the thermostat."""
         _LOGGER.debug("%s: request 'getThermostatInfo'", self._device_name)
 
         self._data = await self.do_api_request(
@@ -196,7 +203,6 @@ class ThermostatDevice(ClimateEntity):
             self._active_state = int(self._data["activeState"])
             self._burner_info = int(self._data["burnerInfo"])
             self._modulation_level = int(self._data["currentModulationLevel"])
-            self._current_internal_boiler_setpoint = int(self._data["currentInternalBoilerSetpoint"])
             self._current_setpoint = int(self._data["currentSetpoint"]) / 100
             self._current_temperature = int(self._data["currentTemp"]) / 100
             self._ot_comm_error = int(self._data["otCommError"])
@@ -223,6 +229,25 @@ class ThermostatDevice(ClimateEntity):
                 4: PRESET_ECO,
             }
             self._attr_preset_mode = preset_mapping.get(self._active_state)
+
+        # Notify HA that state has changed
+        self.async_write_ha_state()
+
+    @staticmethod
+    async def do_api_request(
+        name: str, session: aiohttp.ClientSession, url: str
+    ) -> dict[str, Any] | None:
+        """Do an API request."""
+        try:
+            async with asyncio.timeout(5):
+                response = await session.get(url, headers={"Accept-Encoding": "identity"})
+            response = await response.json(content_type="text/javascript")
+            _LOGGER.debug("Data received from %s: %s", name, response)
+        except (aiohttp.ClientError, TimeoutError, TypeError, KeyError) as err:
+            _LOGGER.error("Cannot poll %s using url: %s - %s", name, url, err)
+            return None
+
+        return response
 
     @property
     def min_temp(self) -> float:

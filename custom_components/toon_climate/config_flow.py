@@ -144,39 +144,15 @@ class ToonClimateOptionsFlowHandler(OptionsFlow):
     async def async_step_init(self, user_input: dict[str, Any] | None = None) -> ConfigFlowResult:
         """Manage the options."""
         if user_input is not None:
-            # Update both data and options
-            new_data = {
-                CONF_HOST: user_input.get(CONF_HOST, self._config_entry.data.get(CONF_HOST)),
-                CONF_PORT: user_input.get(
-                    CONF_PORT, self._config_entry.data.get(CONF_PORT, DEFAULT_PORT)
-                ),
-                CONF_NAME: user_input.get(
-                    CONF_NAME, self._config_entry.data.get(CONF_NAME, DEFAULT_NAME)
-                ),
-            }
-
             new_options = {
                 CONF_MIN_TEMP: user_input.get(CONF_MIN_TEMP, DEFAULT_MIN_TEMP),
                 CONF_MAX_TEMP: user_input.get(CONF_MAX_TEMP, DEFAULT_MAX_TEMP),
                 CONF_SCAN_INTERVAL: user_input.get(CONF_SCAN_INTERVAL, DEFAULT_SCAN_INTERVAL),
             }
 
-            # Validate connection if host or port changed
-            if new_data[CONF_HOST] != self._config_entry.data.get(CONF_HOST) or new_data[
-                CONF_PORT
-            ] != self._config_entry.data.get(CONF_PORT):
-                session = async_get_clientsession(self.hass)
-                if not await validate_connection(new_data[CONF_HOST], new_data[CONF_PORT], session):
-                    return self.async_show_form(
-                        step_id="init",
-                        data_schema=self._get_options_schema(),
-                        errors={"base": "cannot_connect"},
-                    )
-
-            # Update the config entry
+            # Update options only (data remains unchanged after initial setup)
             self.hass.config_entries.async_update_entry(
                 self._config_entry,
-                data=new_data,
                 options=new_options,
             )
             return self.async_create_entry(title="", data=new_options)
@@ -190,18 +166,6 @@ class ToonClimateOptionsFlowHandler(OptionsFlow):
         """Return the options schema."""
         return vol.Schema(
             {
-                vol.Required(
-                    CONF_HOST,
-                    default=self._config_entry.data.get(CONF_HOST, ""),
-                ): str,
-                vol.Optional(
-                    CONF_PORT,
-                    default=self._config_entry.data.get(CONF_PORT, DEFAULT_PORT),
-                ): vol.Coerce(int),
-                vol.Optional(
-                    CONF_NAME,
-                    default=self._config_entry.data.get(CONF_NAME, DEFAULT_NAME),
-                ): str,
                 vol.Optional(
                     CONF_MIN_TEMP,
                     default=self._config_entry.options.get(CONF_MIN_TEMP, DEFAULT_MIN_TEMP),

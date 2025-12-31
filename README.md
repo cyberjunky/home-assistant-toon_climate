@@ -25,17 +25,7 @@ A Home Assistant custom integration for controlling rooted Toon thermostats. Mon
 
 ## Screenshots
 
-<p align="center">
-  <a href="https://github.com/cyberjunky/home-assistant-toon_climate/raw/master/screenshots/setup.png" target="_blank" title="Screenshot Toon Setup">
-    <img src="https://github.com/cyberjunky/home-assistant-toon_climate/raw/master/screenshots/setup.png" alt="Setup" width="220" style="margin-right:8px;" />
-  </a>
-  <a href="https://github.com/cyberjunky/home-assistant-toon_climate/raw/master/screenshots/comfort.png" target="_blank" title="Screenshot Toon Thermostat">
-    <img src="https://github.com/cyberjunky/home-assistant-toon_climate/raw/master/screenshots/comfort.png" alt="Comfort" width="220" style="margin-right:8px;" />
-  </a>
-  <a href="https://github.com/cyberjunky/home-assistant-toon_climate/raw/master/screenshots/history.png" target="_blank" title="Screenshot Toon History">
-    <img src="https://github.com/cyberjunky/home-assistant-toon_climate/raw/master/screenshots/history.png" alt="History" width="220" />
-  </a>
-</p>
+![Configure](screenshots/setup.png) ![Thermostat](screenshots/comfort.png) ![History](screenshots/history.png)
 
 ## Requirements
 

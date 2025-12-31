@@ -29,18 +29,11 @@
       "detail": "Runs lint checks"
     },
     {
-      "label": "Rebuild Container",
+      "label": "Rebuild and Reopen Container (Instructions)",
       "type": "shell",
-      "command": "${command:remote-containers.rebuildContainer}",
+      "command": "echo 'To rebuild container: Press Ctrl+Shift+P and run Dev Containers: Rebuild and Reopen in Container'",
       "problemMatcher": [],
-      "detail": "Rebuilds the dev container"
-    },
-    {
-      "label": "Reopen in Container",
-      "type": "shell",
-      "command": "${command:remote-containers.reopenInContainer}",
-      "problemMatcher": [],
-      "detail": "Reopens the folder in a dev container"
+      "detail": "Prints instructions for rebuilding the container"
     }
   ],
   "version": "2.0.0"
