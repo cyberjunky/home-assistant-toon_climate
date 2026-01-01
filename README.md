@@ -307,24 +307,12 @@ automation:
 
 ## Troubleshooting
 
-### Enable Debug Logging
-
-Add the relevant lines below to the `configuration.yaml`:
-
-```yaml
-logger:
-  default: info
-  logs:
-    custom_components.toon_climate: debug
-```
-
-Alternatively, enable debug logging via the UI in **Settings** → **Devices & Services** → **Toon Boiler Status** → **Enable debug logging**:
-
-![Enable Debug Logging](screenshots/enabledebug.png)
-
-Then perform any steps to reproduce the issue and disable debug logging again. It will download the relevant log file automatically.
-
 ### Common Issues
+
+**My Thermostat isn't working after update**
+
+ - It probably created another (duplicate) thermostat device, look it up under Developers Tools
+ - Delete old one & rename new, or deinstall/reinstall integration to fix
 
 **Integration won't connect:**
 
@@ -336,6 +324,23 @@ Then perform any steps to reproduce the issue and disable debug logging again. I
 - Check Home Assistant logs for import errors
 - Verify the YAML syntax is correct
 - Manually add via UI if automatic import fails
+
+### Enable Debug Logging
+
+Add the relevant lines below to the `configuration.yaml`:
+
+```yaml
+logger:
+  default: info
+  logs:
+    custom_components.toon_climate: debug
+```
+
+Alternatively, enable debug logging via the UI in **Settings** → **Devices & Services** → **Toon Climate** → **Enable debug logging**:
+
+![Enable Debug Logging](screenshots/enabledebug.png)
+
+Then perform any steps to reproduce the issue and disable debug logging again. It will download the relevant log file automatically.
 
 ## Development
 
