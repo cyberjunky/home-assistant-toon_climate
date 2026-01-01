@@ -205,6 +205,7 @@ class ThermostatDevice(ClimateEntity):
             self._modulation_level = int(self._data["currentModulationLevel"])
             self._current_setpoint = int(self._data["currentSetpoint"]) / 100
             self._current_temperature = int(self._data["currentTemp"]) / 100
+            self._current_internal_boiler_setpoint = int(self._data["currentInternalBoilerSetpoint"])
             self._ot_comm_error = int(self._data["otCommError"])
             self._program_state = int(self._data["programState"])
 
