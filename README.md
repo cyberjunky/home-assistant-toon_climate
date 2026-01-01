@@ -307,6 +307,24 @@ automation:
 
 ## Troubleshooting
 
+### Common Issues
+
+**My Thermostat isn't working after update**
+
+ - It probably created another (duplicate) thermostat device, look it up under Developers Tools
+ - Delete old one & rename new, or deinstall/reinstall integration to fix
+
+**Integration won't connect:**
+
+- Verify your Toon's IP address is correct
+- Check that port 80 is accessible (try visiting `http://YOUR_TOON_IP/happ_thermstat?action=getThermostatInfo` in a browser)
+
+**Old YAML config not migrating:**
+
+- Check Home Assistant logs for import errors
+- Verify the YAML syntax is correct
+- Manually add via UI if automatic import fails
+
 ### Enable Debug Logging
 
 Add the relevant lines below to the `configuration.yaml`:
@@ -323,19 +341,6 @@ Alternatively, enable debug logging via the UI in **Settings** → **Devices & S
 ![Enable Debug Logging](screenshots/enabledebug.png)
 
 Then perform any steps to reproduce the issue and disable debug logging again. It will download the relevant log file automatically.
-
-### Common Issues
-
-**Integration won't connect:**
-
-- Verify your Toon's IP address is correct
-- Check that port 80 is accessible (try visiting `http://YOUR_TOON_IP/happ_thermstat?action=getThermostatInfo` in a browser)
-
-**Old YAML config not migrating:**
-
-- Check Home Assistant logs for import errors
-- Verify the YAML syntax is correct
-- Manually add via UI if automatic import fails
 
 ## Development
 
