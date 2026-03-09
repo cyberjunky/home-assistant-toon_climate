@@ -7,4 +7,4 @@ pylint==4.0.4
 pyupgrade==3.21.2
 ruff==0.14.11
 types-pytz==2025.2.0.20251108
-vulture==2.14
+vulture==2.15
