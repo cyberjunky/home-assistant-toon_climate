@@ -6,5 +6,5 @@ pre-commit-hooks==6.0.0
 pylint==4.0.5
 pyupgrade==3.21.2
 ruff==0.15.6
-types-pytz==2025.2.0.20251108
+types-pytz==2026.1.1.20260304
 vulture==2.15
