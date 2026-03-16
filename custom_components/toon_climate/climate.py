@@ -87,10 +87,10 @@ async def async_setup_entry(
 ) -> None:
     """Set up the Toon Climate platform from a config entry."""
     session = async_get_clientsession(hass)
-    
+
     # Get scan interval from options
     scan_interval = entry.options.get(CONF_SCAN_INTERVAL, DEFAULT_SCAN_INTERVAL)
-    
+
     entity = ThermostatDevice(session, entry, scan_interval)
     async_add_entities([entity], update_before_add=True)
 
@@ -166,7 +166,7 @@ class ThermostatDevice(ClimateEntity):
         """Run when entity is added to hass."""
         # Do initial update
         await self._async_update_data()
-        
+
         # Set up periodic updates
         self._unsub_update = async_track_time_interval(
             self.hass,

@@ -143,29 +143,59 @@ class ToonClimateOptionsFlowHandler(OptionsFlow):
 
     async def async_step_init(self, user_input: dict[str, Any] | None = None) -> ConfigFlowResult:
         """Manage the options."""
-        if user_input is not None:
-            new_options = {
-                CONF_MIN_TEMP: user_input.get(CONF_MIN_TEMP, DEFAULT_MIN_TEMP),
-                CONF_MAX_TEMP: user_input.get(CONF_MAX_TEMP, DEFAULT_MAX_TEMP),
-                CONF_SCAN_INTERVAL: user_input.get(CONF_SCAN_INTERVAL, DEFAULT_SCAN_INTERVAL),
-            }
+        errors: dict[str, str] = {}
 
-            # Update options only (data remains unchanged after initial setup)
-            self.hass.config_entries.async_update_entry(
-                self._config_entry,
-                options=new_options,
-            )
-            return self.async_create_entry(title="", data=new_options)
+        if user_input is not None:
+            new_host = user_input.get(CONF_HOST, self._config_entry.data.get(CONF_HOST))
+            new_port = user_input.get(CONF_PORT, self._config_entry.data.get(CONF_PORT, DEFAULT_PORT))
+            current_host = self._config_entry.data.get(CONF_HOST)
+            current_port = self._config_entry.data.get(CONF_PORT, DEFAULT_PORT)
+
+            # Validate connection only if host or port changed
+            if new_host != current_host or new_port != current_port:
+                session = async_get_clientsession(self.hass)
+                if not await validate_connection(new_host, new_port, session):
+                    errors["base"] = "cannot_connect"
+
+            if not errors:
+                new_options = {
+                    CONF_MIN_TEMP: user_input.get(CONF_MIN_TEMP, DEFAULT_MIN_TEMP),
+                    CONF_MAX_TEMP: user_input.get(CONF_MAX_TEMP, DEFAULT_MAX_TEMP),
+                    CONF_SCAN_INTERVAL: user_input.get(CONF_SCAN_INTERVAL, DEFAULT_SCAN_INTERVAL),
+                }
+
+                # Update data if host or port changed
+                new_data = dict(self._config_entry.data)
+                if new_host != current_host or new_port != current_port:
+                    new_data[CONF_HOST] = new_host
+                    new_data[CONF_PORT] = new_port
+
+                self.hass.config_entries.async_update_entry(
+                    self._config_entry,
+                    unique_id=new_host,
+                    data=new_data,
+                    options=new_options,
+                )
+                return self.async_create_entry(title="", data=new_options)
 
         return self.async_show_form(
             step_id="init",
             data_schema=self._get_options_schema(),
+            errors=errors,
         )
 
     def _get_options_schema(self) -> vol.Schema:
         """Return the options schema."""
         return vol.Schema(
             {
+                vol.Required(
+                    CONF_HOST,
+                    default=self._config_entry.data.get(CONF_HOST),
+                ): str,
+                vol.Optional(
+                    CONF_PORT,
+                    default=self._config_entry.data.get(CONF_PORT, DEFAULT_PORT),
+                ): vol.Coerce(int),
                 vol.Optional(
                     CONF_MIN_TEMP,
                     default=self._config_entry.options.get(CONF_MIN_TEMP, DEFAULT_MIN_TEMP),

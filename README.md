@@ -110,10 +110,15 @@ Change integration settings without restarting Home Assistant:
 1. Go to **Settings** → **Devices & Services**
 2. Find **Toon Climate**
 3. Click **Configure** icon
-4. Modify name, min/max temperatures or scan interval
+4. Modify available settings:
+   - **Host**: IP address of your Toon (validated on change)
+   - **Port**: Port number (validated on change)
+   - **Minimum Temperature**: Lower bound for temperature setpoint
+   - **Maximum Temperature**: Upper bound for temperature setpoint
+   - **Update Interval**: Seconds between polling updates
 5. Click **Submit**
 
-Changes apply immediately.
+Changes apply immediately — no restart required. If the host or port is changed, the connection to the new address is validated before saving.
 
 ## Advanced Usage
 
