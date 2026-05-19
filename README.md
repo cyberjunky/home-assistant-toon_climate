@@ -34,6 +34,10 @@ The climate entity exposes additional attributes for advanced automations:
 | `current_internal_boiler_setpoint` | Internal boiler water temperature setpoint |
 | `ot_comm_error` | OpenTherm communication error flag (`0` = no error) |
 | `program_state` | Schedule state: `0` = manual, `1` = schedule active, `2` = schedule override |
+| `next_setpoint` | Next scheduled temperature setpoint (°C) |
+| `next_state` | Next scheduled preset name (e.g. `comfort`, `home`, `sleep`, `away`, `eco`) |
+| `next_switch_time` | ISO 8601 timestamp of the next program switch |
+| `program_info` | Human-readable next program change, e.g. `"at 17:00 to Comfort"` (`None` when unavailable) |
 
 ## Screenshots
 
@@ -220,6 +224,16 @@ template:
           {% elif is_state('climate.toon_thermostat','auto') %}
             Automatisch
           {% endif %}
+```
+
+**Next scheduled program:**
+
+```yaml
+template:
+  - sensor:
+      - name: "Toon Volgend Programma"
+        unique_id: toon_next_program
+        state: "{{ state_attr('climate.toon_thermostat', 'program_info') | default('Onbekend') }}"
 ```
 
 **Current room temperature:**

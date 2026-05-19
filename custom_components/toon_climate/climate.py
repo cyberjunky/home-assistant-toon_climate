@@ -11,7 +11,7 @@ from __future__ import annotations
 
 import asyncio
 import logging
-from datetime import timedelta
+from datetime import UTC, datetime, timedelta
 from typing import Any
 
 import aiohttp
@@ -144,6 +144,9 @@ class ThermostatDevice(ClimateEntity):
         self._current_temperature: float | None = None
         self._ot_comm_error: int | None = None
         self._program_state: int | None = None
+        self._next_setpoint: float | None = None
+        self._next_state: int | None = None
+        self._next_switch_time: datetime | None = None
         self._attr_hvac_mode: HVACMode | None = None
         self._attr_current_temperature: float | None = None
         self._attr_target_temperature: float | None = None
@@ -208,6 +211,14 @@ class ThermostatDevice(ClimateEntity):
             self._current_internal_boiler_setpoint = int(self._data["currentInternalBoilerSetpoint"])
             self._ot_comm_error = int(self._data["otCommError"])
             self._program_state = int(self._data["programState"])
+            self._next_setpoint = int(self._data.get("nextSetpoint", 0)) / 100 or None
+            self._next_state = int(self._data["nextState"]) if "nextState" in self._data else None
+            next_switch_raw = self._data.get("nextSwitchTime") or self._data.get("nextTime")
+            self._next_switch_time = (
+                datetime.fromtimestamp(int(next_switch_raw), tz=UTC)
+                if next_switch_raw
+                else None
+            )
 
             # Update entity attributes
             self._attr_target_temperature = self._current_setpoint
@@ -400,10 +411,28 @@ class ThermostatDevice(ClimateEntity):
     @property
     def extra_state_attributes(self) -> dict[str, Any]:
         """Return additional Toon Thermostat status details."""
+        preset_name_mapping = {
+            0: PRESET_COMFORT,
+            1: PRESET_HOME,
+            2: PRESET_SLEEP,
+            3: PRESET_AWAY,
+            4: PRESET_ECO,
+        }
+        next_preset = preset_name_mapping.get(self._next_state) if self._next_state is not None else None
+
+        program_info: str | None = None
+        if self._next_switch_time is not None and next_preset is not None:
+            local_time = self._next_switch_time.astimezone()
+            program_info = f"at {local_time.strftime('%H:%M')} to {next_preset.capitalize()}"
+
         return {
             "burner_info": self._burner_info,
             "modulation_level": self._modulation_level,
             "current_internal_boiler_setpoint": self._current_internal_boiler_setpoint,
             "ot_comm_error": self._ot_comm_error,
             "program_state": self._program_state,
+            "next_setpoint": self._next_setpoint,
+            "next_state": next_preset,
+            "next_switch_time": self._next_switch_time.astimezone().isoformat() if self._next_switch_time else None,
+            "program_info": program_info,
         }
