@@ -41,8 +41,10 @@ from homeassistant.helpers.aiohttp_client import async_get_clientsession
 from homeassistant.helpers.device_registry import DeviceInfo
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.helpers.event import async_track_time_interval
+from homeassistant.helpers.typing import ConfigType, DiscoveryInfoType
 from homeassistant.util import dt as dt_util
 
+from . import async_import_yaml_config
 from .const import (
     ACTIVE_STATE_HOLIDAY,
     ACTIVE_STATE_HOME,
@@ -96,6 +98,16 @@ SUPPORT_PRESETS = [
 SUPPORT_MODES = [HVACMode.HEAT, HVACMode.AUTO]
 
 BASE_URL = "http://{0}:{1}{2}"
+
+
+async def async_setup_platform(
+    hass: HomeAssistant,
+    config: ConfigType,
+    async_add_entities: AddEntitiesCallback,
+    discovery_info: DiscoveryInfoType | None = None,
+) -> None:
+    """Import a legacy 'climate: - platform: toon_climate' YAML configuration."""
+    async_import_yaml_config(hass, dict(config))
 
 
 async def async_setup_entry(

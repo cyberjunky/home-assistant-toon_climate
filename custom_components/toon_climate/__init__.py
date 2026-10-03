@@ -5,11 +5,12 @@ from __future__ import annotations
 import logging
 
 import voluptuous as vol
-from homeassistant.config_entries import ConfigEntry
+from homeassistant.config_entries import SOURCE_IMPORT, ConfigEntry
 from homeassistant.const import CONF_HOST, CONF_NAME, CONF_PORT
-from homeassistant.core import HomeAssistant
+from homeassistant.core import HomeAssistant, callback
 from homeassistant.helpers import config_validation as cv
 from homeassistant.helpers import entity_registry as er
+from homeassistant.helpers.issue_registry import IssueSeverity, async_create_issue
 from homeassistant.helpers.typing import ConfigType
 
 from .const import (
@@ -129,43 +130,40 @@ async def async_migrate_entities(hass: HomeAssistant, entry: ConfigEntry) -> Non
     _LOGGER.debug("No old entities found to migrate for host %s", host)
 
 
-async def async_setup(hass: HomeAssistant, config: ConfigType) -> bool:
-    """Set up the Toon Climate integration from YAML (legacy migration)."""
-    # Check for legacy climate platform configuration
-    if "climate" in config:
-        for platform_config in config["climate"]:
-            if platform_config.get("platform") == DOMAIN:
-                _LOGGER.warning(
-                    "Configuration of Toon Climate via YAML platform is deprecated. "
-                    "Your configuration has been imported. Please remove the YAML "
-                    "configuration and restart Home Assistant."
-                )
-                # Import the configuration
-                hass.async_create_task(
-                    hass.config_entries.flow.async_init(
-                        DOMAIN,
-                        context={"source": "import"},
-                        data=platform_config,
-                    )
-                )
+@callback
+def async_import_yaml_config(hass: HomeAssistant, yaml_config: dict) -> None:
+    """Import a legacy YAML configuration and raise a repairs issue about it."""
+    _LOGGER.warning(
+        "Configuration of Toon Climate via YAML is deprecated. "
+        "Your configuration has been imported. Please remove the YAML "
+        "configuration and restart Home Assistant"
+    )
+    async_create_issue(
+        hass,
+        DOMAIN,
+        "deprecated_yaml",
+        is_fixable=False,
+        issue_domain=DOMAIN,
+        severity=IssueSeverity.WARNING,
+        translation_key="deprecated_yaml",
+    )
+    hass.async_create_task(
+        hass.config_entries.flow.async_init(
+            DOMAIN,
+            context={"source": SOURCE_IMPORT},
+            data=yaml_config,
+        )
+    )
 
-    # Check for new-style domain configuration
-    if DOMAIN in config:
-        domain_config = config[DOMAIN]
-        if "climate" in domain_config:
-            for climate_config in domain_config["climate"]:
-                _LOGGER.warning(
-                    "Configuration of Toon Climate via YAML is deprecated. "
-                    "Your configuration has been imported. Please remove the YAML "
-                    "configuration and restart Home Assistant."
-                )
-                hass.async_create_task(
-                    hass.config_entries.flow.async_init(
-                        DOMAIN,
-                        context={"source": "import"},
-                        data=climate_config,
-                    )
-                )
+
+async def async_setup(hass: HomeAssistant, config: ConfigType) -> bool:
+    """Set up the Toon Climate integration from YAML (legacy migration).
+
+    The old 'climate: - platform: toon_climate' format is imported by
+    async_setup_platform in climate.py.
+    """
+    for climate_config in config.get(DOMAIN, {}).get("climate", []):
+        async_import_yaml_config(hass, climate_config)
 
     return True
 

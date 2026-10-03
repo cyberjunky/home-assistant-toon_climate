@@ -62,5 +62,11 @@
         "command_failed": {
             "message": "{name}: command could not be delivered to the Toon device at {host}."
         }
+    },
+    "issues": {
+        "deprecated_yaml": {
+            "title": "The Toon Climate YAML configuration is being removed",
+            "description": "Configuring Toon Climate using YAML is deprecated.\n\nYour existing YAML configuration has been imported into the UI automatically.\n\nRemove the Toon Climate YAML configuration from your configuration.yaml file and restart Home Assistant to fix this issue."
+        }
     }
 }
