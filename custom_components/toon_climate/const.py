@@ -1,5 +1,14 @@
 """Constants for the Toon Climate integration."""
 
+from homeassistant.components.climate import (
+    PRESET_AWAY,
+    PRESET_COMFORT,
+    PRESET_ECO,
+    PRESET_HOME,
+    PRESET_NONE,
+    PRESET_SLEEP,
+)
+
 DOMAIN = "toon_climate"
 
 # Configuration keys
@@ -14,13 +23,33 @@ DEFAULT_MIN_TEMP = 6.0
 DEFAULT_MAX_TEMP = 30.0
 DEFAULT_SCAN_INTERVAL = 10
 
-# Active states
+# Seconds to wait for a reply from the Toon
+REQUEST_TIMEOUT = 5
+
+# Toon 'activeState' values
 ACTIVE_STATE_MANUAL = -1
 ACTIVE_STATE_COMFORT = 0
 ACTIVE_STATE_HOME = 1
 ACTIVE_STATE_SLEEP = 2
 ACTIVE_STATE_AWAY = 3
 ACTIVE_STATE_HOLIDAY = 4
+
+# Toon 'programState' values
+PROGRAM_STATE_OFF = 0
+PROGRAM_STATE_ON = 1
+PROGRAM_STATE_OVERRIDE = 2
+
+# Toon 'changeSchemeState' state values
+SCHEME_STATE_PROGRAM_OFF = 0
+SCHEME_STATE_PROGRAM_ON = 1
+SCHEME_STATE_TEMPORARY = 2
+SCHEME_STATE_HOLIDAY = 8
+
+# Toon 'burnerInfo' values
+BURNER_OFF = 0
+BURNER_HEATING = 1
+BURNER_HOT_WATER = 2
+BURNER_PREHEATING = 3
 
 # Presets Toon can switch to temporarily within its program
 PROGRAM_PRESET_STATES = (
@@ -29,6 +58,25 @@ PROGRAM_PRESET_STATES = (
     ACTIVE_STATE_SLEEP,
     ACTIVE_STATE_AWAY,
 )
+
+# Toon active state -> Home Assistant preset
+ACTIVE_STATE_TO_PRESET = {
+    ACTIVE_STATE_MANUAL: PRESET_NONE,
+    ACTIVE_STATE_COMFORT: PRESET_COMFORT,
+    ACTIVE_STATE_HOME: PRESET_HOME,
+    ACTIVE_STATE_SLEEP: PRESET_SLEEP,
+    ACTIVE_STATE_AWAY: PRESET_AWAY,
+    ACTIVE_STATE_HOLIDAY: PRESET_ECO,
+}
+
+# Home Assistant preset -> (changeSchemeState state, temperatureState)
+PRESET_TO_SCHEME = {
+    PRESET_COMFORT: (SCHEME_STATE_TEMPORARY, ACTIVE_STATE_COMFORT),
+    PRESET_HOME: (SCHEME_STATE_TEMPORARY, ACTIVE_STATE_HOME),
+    PRESET_SLEEP: (SCHEME_STATE_TEMPORARY, ACTIVE_STATE_SLEEP),
+    PRESET_AWAY: (SCHEME_STATE_TEMPORARY, ACTIVE_STATE_AWAY),
+    PRESET_ECO: (SCHEME_STATE_HOLIDAY, ACTIVE_STATE_HOLIDAY),
+}
 
 # Platforms
 PLATFORMS = ["climate"]

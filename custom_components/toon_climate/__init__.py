@@ -131,8 +131,6 @@ async def async_migrate_entities(hass: HomeAssistant, entry: ConfigEntry) -> Non
 
 async def async_setup(hass: HomeAssistant, config: ConfigType) -> bool:
     """Set up the Toon Climate integration from YAML (legacy migration)."""
-    hass.data.setdefault(DOMAIN, {})
-
     # Check for legacy climate platform configuration
     if "climate" in config:
         for platform_config in config["climate"]:
@@ -174,9 +172,6 @@ async def async_setup(hass: HomeAssistant, config: ConfigType) -> bool:
 
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     """Set up Toon Climate from a config entry."""
-    hass.data.setdefault(DOMAIN, {})
-    hass.data[DOMAIN][entry.entry_id] = {}
-
     # Migrate old entities to new unique_id format
     await async_migrate_entities(hass, entry)
 
@@ -190,26 +185,9 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
 
 async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     """Unload a config entry."""
-    unload_ok = await hass.config_entries.async_unload_platforms(entry, PLATFORMS)
-
-    if unload_ok:
-        hass.data[DOMAIN].pop(entry.entry_id, None)
-
-    return unload_ok
+    return await hass.config_entries.async_unload_platforms(entry, PLATFORMS)
 
 
 async def async_reload_entry(hass: HomeAssistant, entry: ConfigEntry) -> None:
     """Reload config entry when options change."""
     await hass.config_entries.async_reload(entry.entry_id)
-
-
-async def async_migrate_entry(hass: HomeAssistant, config_entry: ConfigEntry) -> bool:
-    """Migrate old entry to new version."""
-    _LOGGER.debug("Migrating from version %s", config_entry.version)
-
-    if config_entry.version == 1:
-        # Current version, no migration needed
-        pass
-
-    _LOGGER.info("Migration to version %s successful", config_entry.version)
-    return True

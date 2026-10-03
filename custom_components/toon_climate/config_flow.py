@@ -81,7 +81,9 @@ class ToonClimateConfigFlow(ConfigFlow, domain=DOMAIN):
                     options={
                         CONF_MIN_TEMP: user_input.get(CONF_MIN_TEMP, DEFAULT_MIN_TEMP),
                         CONF_MAX_TEMP: user_input.get(CONF_MAX_TEMP, DEFAULT_MAX_TEMP),
-                        CONF_SCAN_INTERVAL: user_input.get(CONF_SCAN_INTERVAL, DEFAULT_SCAN_INTERVAL),
+                        CONF_SCAN_INTERVAL: user_input.get(
+                            CONF_SCAN_INTERVAL, DEFAULT_SCAN_INTERVAL
+                        ),
                     },
                 )
             errors["base"] = "cannot_connect"
@@ -95,7 +97,9 @@ class ToonClimateConfigFlow(ConfigFlow, domain=DOMAIN):
                     vol.Optional(CONF_NAME, default=DEFAULT_NAME): str,
                     vol.Optional(CONF_MIN_TEMP, default=DEFAULT_MIN_TEMP): vol.Coerce(float),
                     vol.Optional(CONF_MAX_TEMP, default=DEFAULT_MAX_TEMP): vol.Coerce(float),
-                    vol.Optional(CONF_SCAN_INTERVAL, default=DEFAULT_SCAN_INTERVAL): vol.Coerce(int),
+                    vol.Optional(CONF_SCAN_INTERVAL, default=DEFAULT_SCAN_INTERVAL): vol.Coerce(
+                        int
+                    ),
                 }
             ),
             errors=errors,
@@ -131,52 +135,51 @@ class ToonClimateConfigFlow(ConfigFlow, domain=DOMAIN):
     @callback
     def async_get_options_flow(config_entry: ConfigEntry) -> OptionsFlow:
         """Get the options flow for this handler."""
-        return ToonClimateOptionsFlowHandler(config_entry)
+        return ToonClimateOptionsFlowHandler()
 
 
 class ToonClimateOptionsFlowHandler(OptionsFlow):
     """Handle options flow for Toon Climate."""
 
-    def __init__(self, config_entry: ConfigEntry) -> None:
-        """Initialize options flow."""
-        self._config_entry = config_entry
-
     async def async_step_init(self, user_input: dict[str, Any] | None = None) -> ConfigFlowResult:
         """Manage the options."""
         errors: dict[str, str] = {}
+        entry = self.config_entry
 
         if user_input is not None:
-            new_host = user_input.get(CONF_HOST, self._config_entry.data.get(CONF_HOST))
-            new_port = user_input.get(CONF_PORT, self._config_entry.data.get(CONF_PORT, DEFAULT_PORT))
-            current_host = self._config_entry.data.get(CONF_HOST)
-            current_port = self._config_entry.data.get(CONF_PORT, DEFAULT_PORT)
+            current_host = entry.data[CONF_HOST]
+            current_port = entry.data.get(CONF_PORT, DEFAULT_PORT)
+            new_host = user_input.get(CONF_HOST, current_host)
+            new_port = user_input.get(CONF_PORT, current_port)
+            address_changed = new_host != current_host or new_port != current_port
 
-            # Validate connection only if host or port changed
-            if new_host != current_host or new_port != current_port:
+            if new_host != current_host and any(
+                other.entry_id != entry.entry_id and other.unique_id == new_host
+                for other in self.hass.config_entries.async_entries(DOMAIN)
+            ):
+                errors["base"] = "already_configured"
+            elif address_changed:
                 session = async_get_clientsession(self.hass)
                 if not await validate_connection(new_host, new_port, session):
                     errors["base"] = "cannot_connect"
 
             if not errors:
-                new_options = {
-                    CONF_MIN_TEMP: user_input.get(CONF_MIN_TEMP, DEFAULT_MIN_TEMP),
-                    CONF_MAX_TEMP: user_input.get(CONF_MAX_TEMP, DEFAULT_MAX_TEMP),
-                    CONF_SCAN_INTERVAL: user_input.get(CONF_SCAN_INTERVAL, DEFAULT_SCAN_INTERVAL),
-                }
-
-                # Update data if host or port changed
-                new_data = dict(self._config_entry.data)
-                if new_host != current_host or new_port != current_port:
-                    new_data[CONF_HOST] = new_host
-                    new_data[CONF_PORT] = new_port
-
-                self.hass.config_entries.async_update_entry(
-                    self._config_entry,
-                    unique_id=new_host,
-                    data=new_data,
-                    options=new_options,
+                if address_changed:
+                    self.hass.config_entries.async_update_entry(
+                        entry,
+                        unique_id=new_host,
+                        data={**entry.data, CONF_HOST: new_host, CONF_PORT: new_port},
+                    )
+                return self.async_create_entry(
+                    title="",
+                    data={
+                        CONF_MIN_TEMP: user_input.get(CONF_MIN_TEMP, DEFAULT_MIN_TEMP),
+                        CONF_MAX_TEMP: user_input.get(CONF_MAX_TEMP, DEFAULT_MAX_TEMP),
+                        CONF_SCAN_INTERVAL: user_input.get(
+                            CONF_SCAN_INTERVAL, DEFAULT_SCAN_INTERVAL
+                        ),
+                    },
                 )
-                return self.async_create_entry(title="", data=new_options)
 
         return self.async_show_form(
             step_id="init",
@@ -186,29 +189,21 @@ class ToonClimateOptionsFlowHandler(OptionsFlow):
 
     def _get_options_schema(self) -> vol.Schema:
         """Return the options schema."""
+        data = self.config_entry.data
+        options = self.config_entry.options
         return vol.Schema(
             {
-                vol.Required(
-                    CONF_HOST,
-                    default=self._config_entry.data.get(CONF_HOST),
-                ): str,
+                vol.Required(CONF_HOST, default=data[CONF_HOST]): str,
+                vol.Optional(CONF_PORT, default=data.get(CONF_PORT, DEFAULT_PORT)): vol.Coerce(int),
                 vol.Optional(
-                    CONF_PORT,
-                    default=self._config_entry.data.get(CONF_PORT, DEFAULT_PORT),
-                ): vol.Coerce(int),
-                vol.Optional(
-                    CONF_MIN_TEMP,
-                    default=self._config_entry.options.get(CONF_MIN_TEMP, DEFAULT_MIN_TEMP),
+                    CONF_MIN_TEMP, default=options.get(CONF_MIN_TEMP, DEFAULT_MIN_TEMP)
                 ): vol.Coerce(float),
                 vol.Optional(
-                    CONF_MAX_TEMP,
-                    default=self._config_entry.options.get(CONF_MAX_TEMP, DEFAULT_MAX_TEMP),
+                    CONF_MAX_TEMP, default=options.get(CONF_MAX_TEMP, DEFAULT_MAX_TEMP)
                 ): vol.Coerce(float),
                 vol.Optional(
                     CONF_SCAN_INTERVAL,
-                    default=self._config_entry.options.get(
-                        CONF_SCAN_INTERVAL, DEFAULT_SCAN_INTERVAL
-                    ),
+                    default=options.get(CONF_SCAN_INTERVAL, DEFAULT_SCAN_INTERVAL),
                 ): vol.Coerce(int),
             }
         )

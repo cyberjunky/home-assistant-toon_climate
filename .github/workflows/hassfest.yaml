@@ -6,10 +6,10 @@ on:
     - cron:  "0 0 * * *"
   push:
     branches:
-      - main
+      - master
   pull_request:
     branches:
-      - main
+      - master
 
 permissions: {}
 
@@ -34,3 +34,23 @@ jobs:
           category: integration
           # Remove this 'ignore' key when you have added brand images for your integration to https://github.com/home-assistant/brands
           ignore: brands
+  lint:
+    name: Ruff
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout the repository
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+
+      - name: Install ruff
+        run: pip install "$(grep '^ruff==' requirements_lint.txt)"
+
+      - name: Ruff check
+        run: ruff check --no-fix custom_components
+
+      - name: Ruff format
+        run: ruff format --check custom_components

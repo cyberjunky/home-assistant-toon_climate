@@ -17,6 +17,7 @@ A Home Assistant custom integration for controlling rooted Toon thermostats. Mon
 - **Auto**: Automatic mode - follow Toon's schedule (schedule on)
 
 **Presets:**
+- **None**: Manual setpoint, no preset active (shown when you set a temperature that is not a preset temperature; selecting it holds the current setpoint until the next program switch)
 - **Away**: Away mode setpoint
 - **Home**: Home mode setpoint
 - **Comfort**: Comfort mode setpoint

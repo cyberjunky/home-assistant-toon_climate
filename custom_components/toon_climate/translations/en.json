@@ -54,7 +54,13 @@
             }
         },
         "error": {
-            "cannot_connect": "Unable to connect to the Toon device. Please verify the IP address and port."
+            "cannot_connect": "Unable to connect to the Toon device. Please verify the IP address and port.",
+            "already_configured": "Another Toon device is already configured with this host."
+        }
+    },
+    "exceptions": {
+        "command_failed": {
+            "message": "{name}: command could not be delivered to the Toon device at {host}."
         }
     }
 }
