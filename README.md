@@ -46,6 +46,7 @@ The climate entity exposes additional attributes for advanced automations:
 
 ## Requirements
 
+- Home Assistant 2026.3.0 or newer
 - Rooted Toon thermostat
 - Available in The Netherlands and Belgium
 
@@ -90,7 +91,7 @@ Alternatively:
 
 > **Note:** YAML configuration is deprecated as of v2.0.0
 
-If you previously configured this integration in `configuration.yaml`, your settings will be **automatically imported** on your first restart after updating.
+If you previously configured this integration in `configuration.yaml`, your settings will be **automatically imported** on your first restart after updating. A **Repairs** issue (Settings → System → Repairs) reminds you to remove the YAML afterwards.
 
 **Your old YAML config** (will be migrated):
 
@@ -106,7 +107,6 @@ climate:
 
 1. Remove the YAML configuration from `configuration.yaml`
 2. Manage all settings via **Settings** → **Devices & Services** → **Toon Climate** → **Configure**
-3. Disable unwanted sensors through entity settings
 
 ### Modifying Settings
 
@@ -218,7 +218,7 @@ template:
       - name: "Toon Operation Mode"
         unique_id: toon_operation_mode
         state: >-
-          {% if is_state('climate.toon_thermostat','off') %}
+          {% if is_state_attr('climate.toon_thermostat','preset_mode','eco') %}
             Vakantie
           {% elif is_state('climate.toon_thermostat','heat') %}
             Handmatig
@@ -334,6 +334,11 @@ automation:
  - It probably created another (duplicate) thermostat device, look it up under Developers Tools
  - Delete old one & rename new, or deinstall/reinstall integration to fix
 
+**Thermostat shows as unavailable:**
+
+- Home Assistant can't reach the Toon; it recovers automatically once the Toon responds again
+- Check the Toon is powered on and its IP address hasn't changed
+
 **Integration won't connect:**
 
 - Verify your Toon's IP address is correct
@@ -410,6 +415,6 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 [releases-shield]: https://img.shields.io/github/release/cyberjunky/home-assistant-toon_climate.svg?style=for-the-badge
 [releases]: https://github.com/cyberjunky/home-assistant-toon_climate/releases
 [commits-shield]: https://img.shields.io/github/commit-activity/y/cyberjunky/home-assistant-toon_climate.svg?style=for-the-badge
-[commits]: https://github.com/cyberjunky/home-assistant-toon_climate/commits/main
+[commits]: https://github.com/cyberjunky/home-assistant-toon_climate/commits/master
 [license-shield]: https://img.shields.io/github/license/cyberjunky/home-assistant-toon_climate.svg?style=for-the-badge
 [maintenance-shield]: https://img.shields.io/badge/maintainer-cyberjunky-blue.svg?style=for-the-badge
