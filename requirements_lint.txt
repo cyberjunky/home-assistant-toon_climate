@@ -1,4 +1,4 @@
---requirement requirements.txt
+-r requirements.txt
 codespell==2.4.3
 mypy==2.3.1
 pre-commit==4.6.2
