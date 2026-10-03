@@ -1,7 +1,7 @@
  # Ruff configuration (top-level keys expected in ruff.toml)
 fix = true
 "line-length" = 100
-"target-version" = "py313"
+"target-version" = "py314"
 
 [lint]
 select = [
