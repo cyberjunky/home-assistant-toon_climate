@@ -41,6 +41,7 @@ from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.helpers.event import async_track_time_interval
 
 from .const import (
+    ACTIVE_STATE_MANUAL,
     CONF_MAX_TEMP,
     CONF_MIN_TEMP,
     CONF_SCAN_INTERVAL,
@@ -50,6 +51,7 @@ from .const import (
     DEFAULT_PORT,
     DEFAULT_SCAN_INTERVAL,
     DOMAIN,
+    PROGRAM_PRESET_STATES,
 )
 
 _LOGGER = logging.getLogger(__name__)
@@ -277,7 +279,7 @@ class ThermostatDevice(ClimateEntity):
         if target_temperature is None:
             return
 
-        value = int(target_temperature * 100)
+        value = round(target_temperature * 100)
 
         if target_temperature < self._min_temp or target_temperature > self._max_temp:
             _LOGGER.warning(
@@ -312,9 +314,62 @@ class ThermostatDevice(ClimateEntity):
             ),
         )
 
-        if self._data:
-            self._current_setpoint = target_temperature
-            self._attr_target_temperature = target_temperature
+        if not self._data:
+            return
+
+        await self._async_update_data()
+
+        # Toon only recognises some preset temperatures as that preset
+        if self._program_state != 0 and self._active_state == ACTIVE_STATE_MANUAL:
+            await self._async_activate_matching_preset(value)
+
+    async def _async_activate_matching_preset(self, setpoint: int) -> None:
+        """Temporarily activate the preset whose temperature is setpoint."""
+        data = await self.do_api_request(
+            self._device_name,
+            self._session,
+            BASE_URL.format(
+                self._host,
+                self._port,
+                "/hcb_config?action=getObjectConfigTree"
+                "&package=happ_thermstat&internalAddress=thermostatStates",
+            ),
+        )
+        if not data:
+            return
+
+        try:
+            matches = [
+                int(state["id"][0])
+                for state in data["states"][0]["state"]
+                if int(state["tempValue"][0]) == setpoint
+                and int(state["id"][0]) in PROGRAM_PRESET_STATES
+            ]
+        except (KeyError, IndexError, TypeError, ValueError) as err:
+            _LOGGER.debug("%s: cannot parse preset temperatures: %s", self._device_name, err)
+            return
+
+        # Presets sharing a temperature leave the intended one ambiguous
+        if len(matches) != 1:
+            return
+
+        _LOGGER.debug(
+            "%s: setpoint %s matches preset state %s, activating it",
+            self._device_name,
+            setpoint,
+            matches[0],
+        )
+
+        if await self.do_api_request(
+            self._device_name,
+            self._session,
+            BASE_URL.format(
+                self._host,
+                self._port,
+                f"/happ_thermstat?action=changeSchemeState&state=2&temperatureState={matches[0]}",
+            ),
+        ):
+            await self._async_update_data()
 
     @property
     def hvac_action(self) -> HVACAction | None:
