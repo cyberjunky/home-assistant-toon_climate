@@ -130,7 +130,7 @@ class ThermostatDevice(ClimateEntity):
     _attr_hvac_modes = SUPPORT_MODES
     _attr_preset_modes = SUPPORT_PRESETS
     _attr_supported_features = SUPPORT_FLAGS
-    _attr_temperature_unit = UnitOfTemperature.CELSIUS
+    _attr_native_temperature_unit = UnitOfTemperature.CELSIUS
 
     def __init__(
         self, session: aiohttp.ClientSession, entry: ConfigEntry, scan_interval: int
@@ -261,7 +261,7 @@ class ThermostatDevice(ClimateEntity):
             self._burner_info = int(data["burnerInfo"])
             self._modulation_level = int(data["currentModulationLevel"])
             self._current_setpoint = int(data["currentSetpoint"]) / 100
-            self._attr_current_temperature = int(data["currentTemp"]) / 100
+            self._attr_native_current_temperature = int(data["currentTemp"]) / 100
             self._current_internal_boiler_setpoint = int(data["currentInternalBoilerSetpoint"])
             self._ot_comm_error = int(data["otCommError"])
             self._program_state = int(data["programState"])
@@ -276,7 +276,7 @@ class ThermostatDevice(ClimateEntity):
             _LOGGER.debug("%s: cannot parse thermostat info %s: %s", self._device_name, data, err)
             return False
 
-        self._attr_target_temperature = self._current_setpoint
+        self._attr_native_target_temperature = self._current_setpoint
         self._attr_hvac_mode = (
             HVACMode.HEAT if self._program_state == PROGRAM_STATE_OFF else HVACMode.AUTO
         )
