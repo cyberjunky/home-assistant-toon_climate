@@ -46,7 +46,7 @@ The climate entity exposes additional attributes for advanced automations:
 
 ## Requirements
 
-- Home Assistant 2026.3.0 or newer
+- Home Assistant 2026.11.0 or newer
 - Rooted Toon thermostat
 - Available in The Netherlands and Belgium
 
